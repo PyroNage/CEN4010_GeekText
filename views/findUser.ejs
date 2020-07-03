@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Find user by username</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+
+<body>
+<h1 data-position="header">Find User by username.</h1>
+
+<section data-position="create-user">
+    <h2>Find user by Username</h2>
+
+    <form action="/findUser" method="POST">
+        <input type="text" placeholder="Username" name="username"/>
+        <button type="submit">Find User</button>
+    </form>
+</section>
+
+<section data-position="users">
+    <h2>Search Results</h2>
+
+    <ul class="users">
+        <% for(var i = 0; i < users.length; i++) { %>
+            <li class="users">
+                First Name: <span><%= users[i].firstName %></span> <br>
+                Last Name: <span><%= users[i].lastName %></span> <br>
+                Email: <span><%= users[i].email %></span> <br>
+                Password: <span><%= users[i].password %></span> <br>
+                Home Address: <span><%= users[i].homeAddress %></span> <br>
+            </li>
+        <% } %>
+    </ul>
+</section>
+
+<script src="/main.js"></script>
+</body>
+</html>

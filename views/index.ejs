@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>CEN4010 Book Project Group 3</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+
+<body>
+<h1 data-position="header">Geek Text Group 3.</h1>
+
+<section data-position="create-user">
+    <h2>User Management</h2>
+
+    <div class="btn-group">
+        <a href="/createUser">Create User</a><br>
+        <a href="/findUser">Find User</a><br>
+    </div>
+</section>
+
+<section data-position="update-quote">
+    <div>
+        <h2>Placeholder!</h2>
+        <p>
+            Stop reading me
+        </p>
+        <button id="update-button">Save some kitties</button>
+    </div>
+</section>
+
+<section data-position="delete-quote">
+    <div>
+        <h2>Second Placeholder!</h2>
+        <p>
+            Stop here as well!
+        </p>
+        <button id="delete-button">Blow up the world</button>
+    </div>
+    <div id="message"></div>
+</section>
+
+<section data-position="users">
+    <h2>Users</h2>
+
+    <ul class="users">
+        <% for(var i = 0; i < users.length; i++) { %>
+            <li class="users">
+                First Name: <span><%= users[i].firstName %></span> <br>
+                Last Name: <span><%= users[i].lastName %></span> <br>
+                Email: <span><%= users[i].email %></span> <br>
+                Password: <span><%= users[i].password %></span> <br>
+                Home Address: <span><%= users[i].homeAddress %></span> <br>
+            </li>
+        <% } %>
+    </ul>
+</section>
+
+<script src="/main.js"></script>
+</body>
+</html>
