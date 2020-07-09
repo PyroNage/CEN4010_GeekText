@@ -1,7 +1,7 @@
 {
-  "name": "crud-demo",
+  "name": "geek_text",
   "version": "1.0.0",
-  "description": "Demo for Crud Express MongoDB article at https://zellwk.com/blog/crud-express-mongodb",
+  "description": "Geek Text project fro CEN4010 made by group 3",
   "main": "index.js",
   "scripts": {
     "start": "node pm2.js",

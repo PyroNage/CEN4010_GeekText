@@ -151,7 +151,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     // ========================
     const isProduction = process.env.NODE_ENV === 'production'
     const port = isProduction ? 7500 : 3000
-    app.listen(process.env.PORT || 5000, function () {
+    app.listen(process.env.PORT || 3000, function () {
       console.log(`listening on ${port}`)
     })
   })
