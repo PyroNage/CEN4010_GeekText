@@ -53,6 +53,26 @@ body {
   overflow: scroll;
 }
 
+[data-position="login-user"] {
+
+}
+
+/* Custom Classes */
+
+.center-text {
+  text-align: center;
+}
+
+.login-button {
+  background-color: #9090a0b0;
+  color: black;
+  border: 2px solid #404050;
+  width: 50%;
+  border-radius: 7.5%;
+}
+
+/* End of custom Classes */
+
 [data-position] {
   background-color: white;
   border-radius: 0.5rem;

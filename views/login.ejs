@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Log in</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+
+<body>
+<h1 data-position="header" class="center-text">Log in</h1>
+<!-- Empty Section to center textBox -->
+<section> </section>
+
+<section data-position="login-user" class="center-text">
+    <h2>Insert Credentials</h2>
+
+    <form action="/login" method="POST">
+        <input type="text" placeholder="Email" name="email"/><br>
+        <input type="password" placeholder="Password" name="password"/><br>
+        <button class="login-button" type="submit">Log in</button>
+        <p> Don't have an account? <a href="/signup">sign up</a> instead!</p>
+    </form>
+</section>
+
+<section> </section>
+<section> </section>
+
+<section>
+    <form action="/">
+        <button style="width: 100%; background-color: #9090a0;" class="login-button" type="submit">Return to home</button>
+    </form>
+</section>
+
+<script src="/main.js"></script>
+</body>
+</html>

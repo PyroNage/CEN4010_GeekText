@@ -7,7 +7,8 @@ const app = express();
 // Schema Models
 var User = require('./models/userModel');
 
-
+// Controllers
+var userManagement = require('./controllers/userManagementController.js');
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -96,7 +97,24 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     });
 
     app.post('/login', (req, res) => {
-        // res.render('login.ejs')
+        userManagement.testFunction(req.body);
+    });
+
+    app.get('/signup', (req, res) => {
+        res.render('signup.ejs')
+    });
+
+    app.post('/signup', (req, res) => {
+        User.create(req.body, function (err, user) {
+            // If there is an error creating the user
+            if(err){
+                // Return a status 500 (internal server error) with the error object to display
+                res.status(500).json({'Error creating user': err});
+            } else {
+                // Since there is no error, return to home. (We definitely want to log in the user here before we return home)
+                res.redirect('/')
+            }
+        });
     });
 
     /**
