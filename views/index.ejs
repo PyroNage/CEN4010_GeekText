@@ -9,7 +9,13 @@
 <body>
 <div data-position="header">
     <!-- the paragraph here is the login button for the User account -->
-    <h1 >Geek Text</h1> <p style="float: right; margin-top: -2em" > My Account </p>
+    <!-- isLoggedIn is a temporary hardcoded value in the server.js to test ejs conditional statements -->
+    <% if(isLoggedIn == true){ %>
+        <h1 >Geek Text</h1> <a href="/myAccount" style="float: right; margin-top: -2em" > My Account </a>
+    <% } else { %>
+        <h1 >Geek Text</h1> <div style="float: right; margin-top: -2em" > <a href="/login">Log in</a> / <a href="/signup">Sign up</a> </div>
+    <% } %>
+
 </div>
 
 

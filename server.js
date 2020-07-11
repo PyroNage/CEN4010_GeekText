@@ -7,12 +7,7 @@ const app = express();
 // Schema Models
 var User = require('./models/userModel');
 
-// ========================
-// Link to Database
-// ========================
-// Updates environment variables
-// @see https://zellwk.com/blog/environment-variables/
-//require('./dotenv')
+
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -78,16 +73,43 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     // ========================
 
 
+    // Home Page
+
     app.get('/', (req, res) => {
         // getAllUsers();
-        res.render('index.ejs', { users: allUsers })
+        res.render('index.ejs', { users: allUsers , isLoggedIn: false })
     });
 
+    /**
+     * ########## login and Sign-up routes #################
+     *
+     * GET to /login renders the html for the login page
+     * POST to /login submits the request to the API to login
+     *
+     * GET to /signup renders the html for the sign up page
+     * POST to /signup submits the request to the API to sign up
+     *
+     */
+
+    app.get('/login', (req, res) => {
+        res.render('login.ejs')
+    });
+
+    app.post('/login', (req, res) => {
+        // res.render('login.ejs')
+    });
+
+    /**
+     * ########## End of login and Sign-up routes #################
+     */
+
+    // Page to create user
     app.get('/createUser', (req, res) => {
         // getAllUsers();
         res.render('createUser.ejs')
     });
 
+    // Post request to API to create user
     app.post('/createUser', (req, res) => {
         User.create(req.body)
         .then(result => {
