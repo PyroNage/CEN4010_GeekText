@@ -20,10 +20,28 @@ let books = [       //Making a sample array
     copies_Sold: 10
   },
   {
-    b_name: "Guns Germs and Steel",
-    b_rating: 19,
+  b_name: "Black Rain Cloud",
+    b_rating: 3,
+    b_genre: "documentary",
+    copies_Sold: 17
+  },
+  {
+    b_name: "Random Facts",
+    b_rating: 9,
+    b_genre: "fantasy",
+    copies_Sold: 13
+  },
+  {
+    b_name: "Icarus",
+    b_rating: 5,
+    b_genre: "documentary",
+    copies_Sold: 10
+  },
+  {
+    b_name: "Steel in Space",
+    b_rating: 1,
     b_genre: "science-fiction",
-    copies_Sold: 2
+    copies_Sold: 20
   }]
 
 function compareGenre(a, b) {  //Sorting all the books together depending on genre
