@@ -57,6 +57,8 @@ function createComment(a)
 
     let feedback = String.length > 0 ?
         'You cannot send an empty comment.' :
-        
-        // FUNCTION TO SEND COMMENT TO SERVER
+        'Comment success' ;
+
+    alert(feedback);
+    return comment;
 }
