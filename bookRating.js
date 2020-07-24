@@ -46,4 +46,10 @@ let books = [       //Making a sample array
       b_rating: 1,
       b_genre: "science-fiction",
       copies_Sold: 20
-    }]
+    }
+]
+
+function createRating(a)
+{
+    
+}
