@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const config = require('./config');
+const config = require('../config');
 const mongoose = require('mongoose');
 const app = express();
 
@@ -61,4 +61,9 @@ function createRating(a)
     
     alert(feedback);
     return rating;
+}
+
+exports.test = function()
+{
+  console.log('I work at LAAAAAAAAAAST');
 }
