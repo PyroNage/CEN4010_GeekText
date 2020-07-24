@@ -51,5 +51,12 @@ let books = [       //Making a sample array
 
 function createComment(a)
 {
-    
+    // HOW DO I CREATE A TEXT PROMPT FOR COMMENTS???
+    let commentStr = prompt('Comment test');
+    let comment = String(commentStr);
+
+    let feedback = String.length > 0 ?
+        'You cannot send an empty comment.' :
+        
+        // FUNCTION TO SEND COMMENT TO SERVER
 }

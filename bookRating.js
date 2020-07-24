@@ -51,5 +51,12 @@ let books = [       //Making a sample array
 
 function createRating(a)
 {
-    
+    // HOW DO I CREATE A PROMPT FOR RATINGS???
+    let ratingStr = prompt('Comment test');
+    let rating = Int(commentStr);
+
+    let feedback = 1 <= rating && rating <= 5?
+        'Ratings must be from 1 to 5.' :
+        
+        // FUNCTION TO SEND RATING TO SERVER
 }
