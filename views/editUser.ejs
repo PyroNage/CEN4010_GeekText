@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create User</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+
+<body>
+<h1 data-position="header">Edit User</h1>
+
+<section> </section>
+
+<section data-position="create-user">
+    <h2>Edit User Attributes</h2>
+
+    <form action="/updateUser" method="POST">
+        <input type="text" value="<%=loggedInUser.firstName%>" name="firstName"/> <br>
+        <input type="text" value="<%=loggedInUser.lastName%>" name="lastName"/><br>
+        <input type="text" value="<%=loggedInUser.homeAddress%>" name="homeAddress"/><br>
+        <button type="submit">Update User</button>
+    </form>
+</section>
+
+<section> </section>
+<section> </section>
+
+<section>
+    <form action="/myAccount">
+        <button style="width: 100%; background-color: #9090a0;" class="login-button" type="submit">Return to your Account</button>
+    </form>
+</section>
+
+
+<script src="/main.js"></script>
+</body>
+</html>

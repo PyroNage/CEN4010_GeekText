@@ -2,6 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const passport = require('passport');
+const flash = require('express-flash');
+const session = require('express-session');
+
+const initializePassport = require('./passport-config');
+initializePassport(passport,
+    email => users.find(user => user.email === email),
+    id => users.find(user => user.id === id)
+);
+
 const app = express();
 
 // Schema Models
@@ -68,6 +79,15 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(express.static('public'));
+    app.use(flash());
+    app.use(session({
+        secret: config.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false
+    }));
+
+    app.use(passport.initialize());
+    app.use(passport.session());
 
     // ========================
     // Routes
@@ -77,8 +97,12 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     // Home Page
 
     app.get('/', (req, res) => {
-        // getAllUsers();
-        res.render('index.ejs', { users: allUsers , isLoggedIn: false })
+        let isLoggedIn = false;
+        //Check if user is logged in
+        if(req.user){
+            isLoggedIn = true;
+        }
+        res.render('index.ejs', { users: allUsers , isLoggedIn: isLoggedIn })
     });
 
     /**
@@ -93,33 +117,131 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
      */
 
     app.get('/login', (req, res) => {
-        res.render('login.ejs')
+        // If a user is logged in, redirect to home
+        if(req.user){
+            res.redirect('/');
+        } else {
+            // Otherwise render the log in page
+            res.render('login.ejs')
+        }
     });
 
-    app.post('/login', (req, res) => {
-        userManagement.testFunction(req.body);
-    });
+    app.post('/login',
+        passport.authenticate('local', {
+            successRedirect: '/',
+            failureRedirect: '/login',
+            failureFlash: true })
+    );
 
     app.get('/signup', (req, res) => {
         res.render('signup.ejs')
     });
 
-    app.post('/signup', (req, res) => {
-        User.create(req.body, function (err, user) {
-            // If there is an error creating the user
-            if(err){
-                // Return a status 500 (internal server error) with the error object to display
-                res.status(500).json({'Error creating user': err});
-            } else {
-                // Since there is no error, return to home. (We definitely want to log in the user here before we return home)
-                res.redirect('/')
-            }
-        });
+    app.post('/signup', async (req, res) => {
+        try {
+            // Hashed password to store in db
+            req.body.password = await bcrypt.hash(req.body.password, 10)
+
+            User.create(req.body, function (err, user) {
+                // If there is an error creating the user
+                if(err){
+                    // Return a status 500 (internal server error) with the error object to display
+                    res.status(500).json({'Error creating user': err});
+                } else {
+                    // Since there is no error, return to home. (We definitely want to log in the user here before we return home)
+                    res.redirect('/login')
+                }
+            });
+        } catch {
+            res.redirect('/signup')
+        }
     });
 
     /**
      * ########## End of login and Sign-up routes #################
      */
+
+    /**
+     * ########## User Management Routes #################
+     *
+     * GET to /myAccount renders the html for the my account page
+     * POST to /updateUser submits the request to the API to update User information
+     *
+     */
+
+    app.get('/myAccount', isLoggedIn, (req, res) => {
+        res.render('myAccount.ejs',{ loggedInUser: req.user })
+    });
+
+    app.get('/editUser', isLoggedIn, (req, res) => {
+        res.render('editUser.ejs',{ loggedInUser: req.user })
+    });
+
+    app.post('/updateUser', (req, res) => {
+        let edituser = req.body;
+        let conditions = { _id: req.user.id };
+
+        User.findOneAndUpdate(conditions,{$set: edituser}, { runValidators: true, useFindAndModify: false },function(err,data){
+            if(err){
+                console.log("An error ocurred saving the user.");
+                console.log(err);
+                return res.status(401).json({'Error Updating User': err});
+            }
+            console.log('User Successfully Updated.');
+            res.redirect('/myAccount')
+        });
+    });
+
+    app.get('/changePassword', isLoggedIn, (req, res) => {
+        res.render('changePassword.ejs');
+    });
+
+    app.post('/changePassword/', isLoggedIn, (req, res) => {
+        User.findOne({'_id': req.user.id},{password:1, email:1},async function(err,user){
+            if(err){
+                console.log(err);
+                return res.status(500).end();
+            }
+            if(user.validPassword(req.body.password)){
+                console.log('Password match');
+                user.password = await bcrypt.hash(req.body.newPassword, 10)
+                user.save(function(err) {
+                    if (err){
+                        console.log(err);
+                        return res.status(500).end();
+                    }else{
+                        console.log('Password Successfully Updated.');
+                        res.redirect('/myAccount')
+                    }
+                });
+            }else{
+                //Password Mismatch
+                console.log('Password Mismatch');
+                return res.status(401).json({'Error Updating password': 'Password Mismatch'});
+            }
+        });
+    });
+
+    app.post('/addCreditCard', isLoggedIn, (req, res) => {
+        let currentUser = req.user;
+        currentUser.creditCards.push(req.body);
+        let conditions = { _id: req.user.id };
+
+        User.findOneAndUpdate(conditions,{$set: currentUser}, { runValidators: true, useFindAndModify: false },function(err,data){
+            if(err){
+                console.log("An error ocurred adding the credit card.");
+                console.log(err);
+                return res.status(401).json({'Error Adding Credit Card': err});
+            }
+            console.log('Successfully added Credit Card.');
+            res.redirect('/myAccount')
+        });
+    });
+
+    /**
+     * ########## End of User Management routes #################
+     */
+
 
     // Page to create user
     app.get('/createUser', (req, res) => {
@@ -128,7 +250,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     });
 
     // Post request to API to create user
-    app.post('/createUser', (req, res) => {
+    app.post('/createUser',async (req, res) => {
         User.create(req.body)
         .then(result => {
             getAllUsers();
@@ -154,37 +276,15 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         });
     });
 
-
-
-    app.put('/quotes', (req, res) => {
-      quotesCollection.findOneAndUpdate(
-        { name: 'Yoda' },
-        {
-          $set: {
-            name: req.body.name,
-            quote: req.body.quote
-          }
-        },
-        {
-          upsert: true
+    // ========= Logged In middleware =========
+    function isLoggedIn(req, res, next) {
+        if(req.isAuthenticated()){
+            return next()
         }
-      )
-        .then(result => res.json('Success'))
-        .catch(error => console.error(error))
-    })
 
-    app.delete('/quotes', (req, res) => {
-      quotesCollection.deleteOne(
-        { name: req.body.name }
-      )
-        .then(result => {
-          if (result.deletedCount === 0) {
-            return res.json('No quote to delete')
-          }
-          res.json('Deleted Darth Vadar\'s quote')
-        })
-        .catch(error => console.error(error))
-    })
+        // If user is not logged in, redirect to login page.
+        res.redirect('/login')
+    }
 
     // ========================
     // Listen
