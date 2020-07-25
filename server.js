@@ -104,6 +104,10 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         res.render('signup.ejs')
     });
 
+    // app.get('/booksByRating', (req, res) => {
+        
+    // })
+
     app.post('/signup', (req, res) => {
         User.create(req.body, function (err, user) {
             // If there is an error creating the user
@@ -116,6 +120,8 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
             }
         });
     });
+
+    //
 
     /**
      * ########## End of login and Sign-up routes #################
