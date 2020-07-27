@@ -20,6 +20,8 @@ var User = require('./models/userModel');
 
 // Controllers
 var userManagement = require('./controllers/userManagementController.js');
+var bookRating = require('./controllers/bookRating.js');
+var bookRating = require('./controllers/bookComment.js');
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -237,6 +239,8 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
             res.redirect('/myAccount')
         });
     });
+
+    //
 
     /**
      * ########## End of User Management routes #################
