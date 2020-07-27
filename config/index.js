@@ -16,7 +16,8 @@ var all = {
     },
     statPath: {
         staticPath: path.join(__dirname, '../../client')
-    }
+    },
+    SESSION_SECRET: "STINKY"
 };
 
 module.exports = (

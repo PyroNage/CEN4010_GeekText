@@ -13,7 +13,9 @@
 
 <section data-position="login-user" class="center-text">
     <h2>Insert Credentials</h2>
-
+    <% if(messages.error) {%>
+        <%= messages.error%>
+        <%}%>
     <form action="/login" method="POST">
         <input type="text" placeholder="Email" name="email"/><br>
         <input type="password" placeholder="Password" name="password"/><br>

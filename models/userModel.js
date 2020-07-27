@@ -3,8 +3,40 @@
 /**
  * Module dependencies.
  */
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+
+const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+/**
+ * Credit Card Data object.
+ * Nested inside the user object.
+ */
+var creditCard = new Schema({
+    cardName: {
+        type: String,
+        default: ''
+    },
+    cardNumber : {
+        type: Number,
+    },
+    cardAddress : {
+        type: String,
+        default: ''
+    },
+    cardType: {
+        type: String,
+        enum : ['Visa','Master Card','American Express'],
+        default: 'Visa'
+    },
+    cardExpiration: {
+        type: Date
+        // Storing as ISOdate but all we care about is the month and year
+    },
+    cardCCV: {
+        type: Number
+    }
+});
 
 var UserSchema = new Schema({
     firstName: {
@@ -34,7 +66,19 @@ var UserSchema = new Schema({
     homeAddress: {
         type: String,
         default: ''
-    }
+    },
+    // creditCards is an array storing our creditCard objects
+    creditCards: [creditCard]
 });
+
+UserSchema.methods.validPassword = function(password) {
+    if(!password || !this.password) return false;
+    return bcrypt.compareSync(password, this.password);
+};
+
+UserSchema.methods.validPassword = function(password) {
+    if(!password || !this.password) return false;
+    return bcrypt.compareSync(password, this.password);
+};
 
 module.exports = mongoose.model('User', UserSchema);

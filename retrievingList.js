@@ -1,52 +1,54 @@
 const express = require('express');
 const app = express();
-let books = [       //Making a sample array
-  {
-    b_name: "Harry Potter",
-    b_rating: 3,
-    b_genre: "fantasy",
-    copies_Sold: 17
-  },
-  {
-    b_name: "Mars Colony",
-    b_rating: 29,
-    b_genre: "science-fiction",
-    copies_Sold: 10
-  },
-  {
-    b_name: "Mars Colony23123",
-    b_rating: 3,
-    b_genre: "documentary",
-    copies_Sold: 10
-  },
-  {
-  b_name: "Black Rain Cloud",
-    b_rating: 3,
-    b_genre: "documentary",
-    copies_Sold: 17
-  },
-  {
-    b_name: "Random Facts",
-    b_rating: 9,
-    b_genre: "fantasy",
-    copies_Sold: 13
-  },
-  {
-    b_name: "Icarus",
-    b_rating: 5,
-    b_genre: "documentary",
-    copies_Sold: 10
-  },
-  {
-    b_name: "Steel in Space",
-    b_rating: 1,
-    b_genre: "science-fiction",
-    copies_Sold: 20
-  }]
+var books = require('./models/bookModel');
+
+// let books = [       //Making a sample array
+//   {
+//     bookName: "Harry Potter",
+//     bookRating: 3,
+//     bookGenre: "fantasy",
+//     bookSales: 17
+//   },
+//   {
+//     bookName: "Mars Colony",
+//     bookRating: 29,
+//     bookGenre: "science-fiction",
+//     bookSales: 10
+//   },
+//   {
+//     bookName: "Mars Colony23123",
+//     bookRating: 3,
+//     bookGenre: "documentary",
+//     bookSales: 10
+//   },
+//   {
+//   bookName: "Black Rain Cloud",
+//     bookRating: 3,
+//     bookGenre: "documentary",
+//     bookSales: 17
+//   },
+//   {
+//     bookName: "Random Facts",
+//     bookRating: 9,
+//     bookGenre: "fantasy",
+//     bookSales: 13
+//   },
+//   {
+//     bookName: "Icarus",
+//     bookRating: 5,
+//     bookGenre: "documentary",
+//     bookSales: 10
+//   },
+//   {
+//     bookName: "Steel in Space",
+//     bookRating: 1,
+//     bookGenre: "science-fiction",
+//     bookSales: 20
+//   }]
 
 function compareGenre(a, b) {  //Sorting all the books together depending on genre
-  const bookA = a.b_genre.toUpperCase();
-  const bookB = b.b_genre.toUpperCase();
+  const bookA = a.bookGenre.toUpperCase();
+  const bookB = b.bookGenre.toUpperCase();
 
   let comparison = 0;
   if (bookA > bookB) {
@@ -57,48 +59,46 @@ function compareGenre(a, b) {  //Sorting all the books together depending on gen
   return comparison;
 }
 
-
 function compareRatingDescending(a, b) {    //Sorting books by rating descending
-  const bookA = a.b_rating;
-  const bookB = b.b_rating;
+  const bookA = a.bookRating;
+  const bookB = b.bookRating;
 
   return bookB - bookA;
 }
 
 function compareRatingAscending(a, b) {     //Sorting books by rating ascending (not part of required feature)
-  const bookA = a.b_rating;
-  const bookB = b.b_rating;
+  const bookA = a.bookRating;
+  const bookB = b.bookRating;
 
   return bookA - bookB;
 }
 
 function compareSales(a, b) {             //Sorting books descending by copies sold
-  const bookA = a.copies_Sold;
-  const bookB = b.copies_Sold;
+  const bookA = a.bookSales;
+  const bookB = b.bookSales;
 
   return bookB - bookA;
 }
 
 function genreOnly(a) {                  //Returns only books with a givenGenre
-  if (a.b_genre == givenGenre) {
+  if (a.bookGenre == givenGenre) {
     return a;
   }
 }
 
-
-// books.sort(compareGenre);               //Calls function to sort by genre
+books.sort(compareGenre);               //Calls function to sort by genre
 // books.sort(compareRatingAscending);     //Calls function to sort by rating Ascending
-// books.sort(compareSales);               //Calls function to sort by copies_Sold
+// books.sort(compareSales);               //Calls function to sort by bookSales
 
 
-var givenGenre = 'science-fiction';        //givenGenre should be based on user input
+// var givenGenre = 'science-fiction';        //givenGenre should be based on user input
 // var givenSize = 1;                      //givenSize should be based on user input
 // var items = books.slice(0, givenSize)   //Creates a new array with only values from 0 to givenSize
 
-var test = books.map(genreOnly);           //Creates a new array with only books of givenGenre
+// var test = books.map(genreOnly);           //Creates a new array with only books of givenGenre
 
 console.log(test);
-
+  
 
 
 
