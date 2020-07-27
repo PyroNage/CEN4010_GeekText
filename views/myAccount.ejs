@@ -55,6 +55,7 @@
             <p>Card Number: <%= loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardNumber%></p>
             <p>Card Name: <%= loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardName%></p>
             <p>Billing Address: <%= loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardAddress%></p>
+            <p>Card Type: <%= loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardType%></p>
             <%
 
                 date = loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardExpiration;
