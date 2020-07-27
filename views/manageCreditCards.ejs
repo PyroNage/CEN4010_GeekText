@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create User</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+
+<body>
+
+<div data-position="header">
+    <!-- the paragraph here is the login button for the User account -->
+    <!-- isLoggedIn is a temporary hardcoded value in the server.js to test ejs conditional statements -->
+    <h1>Your Account</h1> <a style="float: right; margin-top: -2em" href="/myAccount">Return To your Account</a>
+</div>
+
+<section data-position="create-user">
+    <h2>Your Credit Cards</h2>
+    <section data-position="credit-cards">
+        <% if (loggedInUser.creditCards.length) {
+        %>
+            <% loggedInUser.creditCards.forEach((creditCard) => {
+                var cardInxed = loggedInUser.creditCards.indexOf(creditCard);
+            %>
+                <h3>Credit Card #<%=cardInxed + 1%></h3>
+                <p>Card Number: <%= creditCard.cardNumber%></p>
+                <p>Card Name: <%= creditCard.cardName%></p>
+                <p>Billing Address: <%= creditCard.cardAddress%></p>
+                <p>Card Type: <%= creditCard.cardType%></p>
+                <%
+
+                    date = creditCard.cardExpiration;
+                    year = date.getFullYear();
+                    month = date.getMonth()+1;
+
+                    if (month < 10) {
+                        month = '0' + month;
+                    }
+
+                    var dateToShow = month + '/'+year
+                %>
+                <p>Expiration Date: <%= dateToShow %></p><br>
+                <form action="/deleteCreditCard?cardIndex=<%=cardInxed%>" method="POST">
+                    <button style="float: right; margin-top: -2em; background-color: #9090a0;" class="login-button" type="submit">Delete Credit Card #<%=cardInxed + 1%></button>
+                </form>
+                <hr>
+            <%
+            }) %>
+            <%
+        } %>
+    </section>
+</section>
+
+<section data-position="credit-cards">
+    <h2>Add a Credit Card</h2>
+        <form action="/addCreditCard" method="POST">
+            <input type="text" placeholder="Name on Card" name="cardName"/> <br>
+            <input type="text" placeholder="Card Number" name="cardNumber"/><br>
+            <input type="month" name="cardExpiration" min="2000-01" value="2020-01"><br>
+            <input type="text" placeholder="Card Address" name="cardAddress"/><br>
+            <select id="cardType" name="cardType">
+                <option value="Visa">Visa</option>
+                <option value="Master Card">Master Card</option>
+                <option value="American Express">American Express</option>
+            </select><br>
+            <input type="text" placeholder="Security Code" name="cardCCV"/><br>
+            <button type="submit">Add Credit Card</button>
+        </form>
+</section>
+<section> </section>
+
+<section> </section>
+
+<section>
+    <form action="/">
+        <button style="width: 100%; background-color: #9090a0;" class="login-button" type="submit">Return to home</button>
+    </form>
+</section>
+
+<script src="/main.js"></script>
+</body>
+</html>

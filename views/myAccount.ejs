@@ -55,6 +55,7 @@
             <p>Card Number: <%= loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardNumber%></p>
             <p>Card Name: <%= loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardName%></p>
             <p>Billing Address: <%= loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardAddress%></p>
+            <p>Card Type: <%= loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardType%></p>
             <%
 
                 date = loggedInUser.creditCards[loggedInUser.creditCards.length - 1].cardExpiration;
@@ -74,7 +75,14 @@
         </form>
     <% } %>
 </section>
-<section> </section>
+<section data-position="credit-cards">
+    <h2>Cheat Menu! (Just for you, professor! :) )</h2>
+    <div>(This wouldn't be in production, it's just to showcase features)</div>
+    <div class="btn-group">
+        <a href="/createUser">Create User</a><br>
+        <a href="/findUser">Search for User</a><br>
+    </div>
+</section>
 
 <section> </section>
 

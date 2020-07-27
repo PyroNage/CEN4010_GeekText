@@ -135,6 +135,11 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
             failureFlash: true })
     );
 
+    app.get('/logout', function(req, res){
+        req.logout();
+        res.redirect('/');
+    });
+
     app.get('/signup', (req, res) => {
         res.render('signup.ejs')
     });
@@ -224,6 +229,10 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         });
     });
 
+    app.get('/manageCreditCards', isLoggedIn, (req, res) => {
+        res.render('manageCreditCards.ejs',{ loggedInUser: req.user })
+    });
+
     app.post('/addCreditCard', isLoggedIn, (req, res) => {
         let currentUser = req.user;
         currentUser.creditCards.push(req.body);
@@ -240,7 +249,27 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         });
     });
 
-    //
+    app.post('/deleteCreditCard', isLoggedIn, (req, res) => {
+        let currentUser = req.user;
+        let cardToDelete = currentUser.creditCards[req.query.cardIndex];
+
+        const indexOfCardInUserObject = currentUser.creditCards.indexOf(cardToDelete);
+        if (indexOfCardInUserObject > -1) {
+            currentUser.creditCards.splice(indexOfCardInUserObject, 1);
+        }
+
+        let conditions = { _id: req.user.id };
+
+        User.findOneAndUpdate(conditions,{$set: currentUser}, { runValidators: true, useFindAndModify: false },function(err,data){
+            if(err){
+                console.log("An error ocurred deleting the credit card.");
+                console.log(err);
+                return res.status(401).json({'Error Deleting Credit Card': err});
+            }
+            console.log('Successfully Deleted Credit Card.');
+            res.redirect('/manageCreditCards')
+        });
+    });
 
     /**
      * ########## End of User Management routes #################
@@ -255,7 +284,9 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
 
     // Post request to API to create user
     app.post('/createUser',async (req, res) => {
+        req.body.password = await bcrypt.hash(req.body.password, 10);
         User.create(req.body)
+
         .then(result => {
             getAllUsers();
             res.redirect('/')

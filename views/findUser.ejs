@@ -6,11 +6,13 @@
     <link rel="stylesheet" href="/styles.css"/>
 </head>
 
-<body>
-<h1 data-position="header">Find User by username.</h1>
+<body style="grid-template-columns: 1fr 1fr;">
+<div data-position="header">
+    <h1>Find User by Username </h1><a style="float: right; margin-top: -2em" href="/myAccount">Return to My Account</a>
+</div>
 
 <section data-position="create-user">
-    <h2>Find user by Username</h2>
+    <h2>Find user by Username (email)</h2>
 
     <form action="/findUser" method="POST">
         <input type="text" placeholder="Username" name="username"/>
@@ -20,16 +22,21 @@
 
 <section data-position="users">
     <h2>Search Results</h2>
-
     <ul class="users">
         <% for(var i = 0; i < users.length; i++) { %>
-            <li class="users">
-                First Name: <span><%= users[i].firstName %></span> <br>
-                Last Name: <span><%= users[i].lastName %></span> <br>
-                Email: <span><%= users[i].email %></span> <br>
-                Password: <span><%= users[i].password %></span> <br>
+            <section data-position="credit-cards">
+                <h3>User Object from Database:</h3>
+                First Name: <span><%= users[i].firstName %></span><br>
+                Last Name: <span><%= users[i].lastName %></span><br>
+                Email: <span><%= users[i].email %></span><br>
+                Password [Hashed]: <span><%= users[i].password %></span><br>
                 Home Address: <span><%= users[i].homeAddress %></span> <br>
-            </li>
+            </section><br>
+            <%if(users.length == 1) { %>
+                <form action="/findUser">
+                    <button type="submit">Show all users</button>
+                </form>
+            <%}%>
         <% } %>
     </ul>
 </section>
