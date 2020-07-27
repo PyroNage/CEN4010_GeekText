@@ -284,7 +284,9 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
 
     // Post request to API to create user
     app.post('/createUser',async (req, res) => {
+        req.body.password = await bcrypt.hash(req.body.password, 10);
         User.create(req.body)
+
         .then(result => {
             getAllUsers();
             res.redirect('/')
