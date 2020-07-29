@@ -288,8 +288,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         User.create(req.body)
 
         .then(result => {
-            getAllUsers();
-            res.redirect('/')
+            res.redirect('/myAccount')
         })
         .catch(error => console.error(error))
     });
