@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Wishlist</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+
+<body>
+    <h1 data-position="header">Wishlist</h1>
+
+    <section data-position="create-user">
+        <h2>Your Wishlists</h2>
+        <ul>
+            <% if(loggedInUser.Wishlist.length != 0) { %>
+                <% for(var i = 0; i < loggedInUser.Wishlist.length; i++) { %>
+                    <section data-position="results">
+                        Name: <span><%= loggedInUser.Wishlist[i].listName%></span><br>
+                        List: <span><%= loggedInUser.Wishlist[i].listContents%></span><br>
+                    </section>
+                <% } %>
+    
+            <% } else { %>
+                <p>You haven't created a wishlist yet.</p>
+            <% } %>
+    
+        </ul>
+    </section>
+
+    <section data-position="wish-list">
+        <h2>Create Wishlists</h2>
+        <% if(loggedInUser.Wishlist.length < 3){ %>
+            <form action="/createWishlist" method="POST">
+            <input type="text" placeholder="Wishlist Name" name="listName"/> <br>
+            <button type="submit">Create Wishlist</button>
+            </form>
+        
+        <% } else { %>
+            <p> You have reached the maximum amount of wishlits </p>
+        <% } %>
+
+    </section>
+
+    <!--FIX: Implement adding and deleting books from wishlist-->
+    <section data-position="wish-list">
+        <h2>Wishlist Management</h2>
+        <form action="/WishlistManagement">
+        <button class="add-book" type="get">Manage Wishlist</button> <br>
+        </form>
+    </section>
+
+
+    <script src="/main.js"></script>
+</body>
+</html>

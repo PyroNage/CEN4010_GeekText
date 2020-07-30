@@ -270,11 +270,80 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
             res.redirect('/manageCreditCards')
         });
     });
-
+    
     /**
      * ########## End of User Management routes #################
      */
 
+    /**
+     *  ########### Wishlist Management Routes #################
+     */
+
+    app.get('/Wishlist', isLoggedIn, (req, res) => {
+        res.render('Wishlist.ejs', { loggedInUser: req.user});
+    });
+
+    app.post('/createWishlist', isLoggedIn, (req,res) => {
+        //var count = await Wishlist.countDocuments();
+        let currentUser = req.user;
+        currentUser.Wishlist.push(req.body);
+        let conditions = { _id: req.user.id };
+
+        User.findOneAndUpdate(conditions,{$set: currentUser}, {runValidators: true, useFindAndModify: false}, function(err,data){
+            if(err){
+                console.log("An error occurred creating the wishlist.");
+                console.log(err);
+                return res.status(401).json({'Error Creating Wishlist': err});
+            }
+            console.log('Successfully Created the Wishlist.');
+            res.redirect('/Wishlist');
+        });
+    });
+
+    app.get('/WishlistManagement', isLoggedIn, (req, res) => {
+        res.render('WishlistManagement.ejs', {loggedInUser: req.user});
+    })
+
+    app.post('/addBook', isLoggedIn, (req,res) => {
+        let currentUser = req.user;
+        currentUser.Wishlist.push(req.body);
+        let conditions = { _id: req.user.id };
+
+        User.find({listName: req.body.listName}, function (err, user) {
+            if(err){
+                res.status(500).json(err);
+            }
+            else{
+                User.findOneAndUpdate(conditions,{$set: currentUser}, {runValidators: true, useFindAndModify: false}, function(err,data){
+                    if(err){
+                        console.log("An error occurred adding the book to the wishlist.");
+                        console.log(err);
+                        return res.status(401).json({'Error Adding Book': err});
+                    }
+                    console.log('Successfully Added the Book.');
+                });
+                res.redirect('/Wishlist');
+            }
+        })
+
+        /**try{
+            let newBook = req.body.listContents;
+            const addBook = await Wishlist.updateOne(
+                {_id: req.params.listId},
+                {$addToSet: {listContents: [newBook]}}
+            );
+            res.json(addBook);
+        }
+        catch (err) {
+            res.json({ message: err} );
+        }**/
+    });
+    
+    
+
+    /**
+     *  ########## End of Wishlist Management routes #################
+     */
 
     // Page to create user
     app.get('/createUser', (req, res) => {

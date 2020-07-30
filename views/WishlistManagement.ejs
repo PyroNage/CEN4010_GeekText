@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Wishlist</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+
+<body>
+    <h1 data-position="header">Wishlist</h1>
+
+    <section data-position="add-book">
+        <h2>Add Book</h2>
+
+        <form action="/addBook" method="POST">
+            <input type="text" placeholder="Wishlist Name" name="listName"/><br>
+            <input type="text" placeholder="Book Title" name="listContent"/><br>
+            <button type="submit">Add book</button>
+        </form>
+    </section>
+
+    <section data-position="remove-book">
+        <h2>Delete Book</h2>
+        <p>Placeholder</p>
+    </section>
+</body>
