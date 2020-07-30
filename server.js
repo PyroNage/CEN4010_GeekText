@@ -324,19 +324,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
                 });
                 res.redirect('/Wishlist');
             }
-        })
-
-        /**try{
-            let newBook = req.body.listContents;
-            const addBook = await Wishlist.updateOne(
-                {_id: req.params.listId},
-                {$addToSet: {listContents: [newBook]}}
-            );
-            res.json(addBook);
-        }
-        catch (err) {
-            res.json({ message: err} );
-        }**/
+        });
     });
     
     
