@@ -1,0 +1,29 @@
+<h3>{{viewTitle}}</h3>
+<form action="/author" method="POST" autocomplete="off">
+    <input type="hidden" name="_id" value="{{author._id}}">
+    <div class="form-group">
+        <label for="author_fname">First Name</label>
+        <input type="text" class="form-control" name="author_fname" placeholder="First Name" value="{{author.author_fname}}">
+    </div>
+    <div class="form-group">
+        <label for="author_lname">Last Name</label>
+        <input type="text" class="form-control" name="author_lname" placeholder="Last Name" value="{{author.author_lname}}">
+    </div>
+    <div class="form-group">
+        <label for="author_biography">Biography</label>
+        <input type="text" class="form-control" name="author_biography" placeholder="Biography" value="{{author.author_biography}}">
+    </div>
+    <div class="form-group">
+        <label for="author_publisher">Publisher</label>
+        <input type="text" class="form-control" name="author_publisher" placeholder="Publisher" value="{{author.author_publisher}}">
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-info" href="/author/authorList">
+            <i class="fa fa-database"></i>
+            Submit
+        </button>
+        <a class="btn btn-secondary" href="/author/authorList"><i class="fa fa-list-alt"></i> View All Authors</a>
+    </div>
+</form>
+</div>
+

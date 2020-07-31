@@ -1,0 +1,26 @@
+<h3><a class="btn btn-secondary" href="/author"><i class="fa fa-plus"></i> Create New</a> Author</h3>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Author First Name</th>
+        <th>Author Last Name</th>
+        <th>Author Biography</th>
+        <th>Author Publisher</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each authorList}}
+        <tr>
+            <td>{{this.author_fname}}</td>
+            <td>{{this.author_lname}}</td>
+            <td>{{this.author_biography}}</td>
+            <td>{{this.author_publisher}}</td>
+            <th></th>
+            <td>
+                <a href="/author/{{this._id}}"><i class="fa fa-pencil fa-lg" aria-hidden="true"></i></a>
+                <a href="/author/delete/{{this.id}}" onclick="return confirm('Are you sure to delete this record ?');"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>

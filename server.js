@@ -6,6 +6,10 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
+const exphbs = require('express-handlebars');
+const path = require('path');
+
+// require('./models/db');
 
 const initializePassport = require('./passport-config');
 initializePassport(passport,
@@ -21,7 +25,10 @@ var User = require('./models/userModel');
 // Controllers
 var userManagement = require('./controllers/userManagementController.js');
 var bookRating = require('./controllers/bookRating.js');
-var bookRating = require('./controllers/bookComment.js');
+var bookComment = require('./controllers/bookComment.js');
+
+const authorController = require('./controllers/authorController');
+const bookController = require('./controllers/bookController');
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -77,7 +84,11 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     // ========================
     // Middlewares
     // ========================
-    app.set('view engine', 'ejs');
+    var engine = require('consolidate');
+
+    app.engine('ejs',engine.ejs);
+    app.engine('handlebars', engine.handlebars);
+
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(express.static('public'));
@@ -88,8 +99,16 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         saveUninitialized: false
     }));
 
+    app.set('views', path.join(__dirname, '/views/'));
+    app.engine('hbs', exphbs({ extname: 'hbs', defaultLayout: 'mainLayout', layoutDir: __dirname + 'views/layouts/' }));
+
     app.use(passport.initialize());
     app.use(passport.session());
+
+    // Regine server
+
+    app.use('/book', bookController);
+    app.use('/author', authorController);
 
     // ========================
     // Routes
@@ -270,12 +289,12 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
             res.redirect('/manageCreditCards')
         });
     });
-    
+
     /**
      * ########## End of User Management routes #################
      */
-
-    /**
+	 
+	     /**
      *  ########### Wishlist Management Routes #################
      */
 
@@ -304,7 +323,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         res.render('WishlistManagement.ejs', {loggedInUser: req.user});
     })
 
-    app.post('/addBook', isLoggedIn, async (req,res) => {
+    app.post('/addBook', isLoggedIn, (req,res) => {
         
         let currentUser = req.user;
 
@@ -312,9 +331,33 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         console.log(req.body);
         let conditions = { _id: req.user.id };
 
-        const addBook = await User.findOneAndUpdate( 
+        for (let i = 0; i < currentUser.Wishlist.length; i++)
+        {
+            if (req.body.listName == currentUser.Wishlist[i].listName)
+            {
+                User.findOneAndUpdate( 
+                    {conditions}, 
+                    {$set: currentUser.Wishlist[i].listName, $addToSet: {Wishlist: {listContents: [req.body.listContents]}}},
+                    {/*runValidators: true,*/ useFindAndModify: false}, function(err,data){
+                        if (err)
+                        {
+                            console.log("An error occurred adding the book to the wishlist.");
+                            console.log(err);
+                            return res.status(401).json({'Error adding book': err});
+            
+                        }
+                        console.log('Successfully added the book.');
+                        res.redirect('/Wishlist');
+            
+                    }
+                );
+                break;
+            }
+        }
+
+        /**User.findOneAndUpdate( 
             {conditions}, 
-            {$set: currentUser, $addToSet: {listContents: [req.body.listContents]}},
+            {$set: currentUser, Wishlist: {listName: req.body.listName}, $addToSet: {Wishlist: {listContents: [req.body.listContents]}}},
             {runValidators: true, useFindAndModify: false}, function(err,data){
                 if (err)
                 {
@@ -327,7 +370,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
                 res.redirect('/Wishlist');
     
             }
-        );
+        );**/
         
         /**const addBook = User.updateOne(
             {listName: wishlistName},
@@ -378,12 +421,23 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
             }
         });**/
     });
+
+    /**app.post('/removeBook', isLoggedIn, (req,res) => {
+        let currentUser = req.user;
+
+        currentUser.Wishlist.push(req.body);
+        console.log(req.body);
+        let conditions = { _id: req.user.id };
+
+    })**/
     
     
 
     /**
      *  ########## End of Wishlist Management routes #################
      */
+
+
 
     // Page to create user
     app.get('/createUser', (req, res) => {
@@ -397,8 +451,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         User.create(req.body)
 
         .then(result => {
-            getAllUsers();
-            res.redirect('/')
+            res.redirect('/myAccount')
         })
         .catch(error => console.error(error))
     });
@@ -429,6 +482,14 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         // If user is not logged in, redirect to login page.
         res.redirect('/login')
     }
+
+    // ========================
+    // Ratings/Comments
+    // ========================
+    app.get('/ratings', (req, res) => {
+        bookRating.test();
+        res.render('index.ejs', { users: allUsers , isLoggedIn: false })
+    });
 
     // ========================
     // Listen

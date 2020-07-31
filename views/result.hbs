@@ -1,0 +1,44 @@
+<h3>{{viewTitle}}</h3>
+<form action="/book/result" method="post" autocomplete="off">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <input type="text" class="form-control" name="search" placeholder="Search" value="{{search}}">
+        </div>
+        <button href="/book/result" class="btn btn-outline-white btn-md my-0 ml-sm-2" type="submit">Search</button>
+    </div>
+</form>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Description</th>
+        <th>Isbn</th>
+        <th>Price</th>
+        <th>Genre</th>
+        <th>Publisher</th>
+        <th>Year Published</th>
+        <th>Copies Sold</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each book}}
+        <tr>
+            <td>{{this.title}}</td>
+            <td>{{this.author}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.isbn}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.genre}}</td>
+            <td>{{this.publisher}}</td>
+            <td>{{this.yearPublished}}</td>
+            <td>{{this.copiesSold}}</td>
+            <th></th>
+            <td>
+                <a href="/book/{{_id}}"><i class="fa fa-pencil fa-lg" aria-hidden="true"></i></a>
+                <a href="/book/delete/{{id}}" onclick="return confirm('Are you sure to delete this record ?');"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
