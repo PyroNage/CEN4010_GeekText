@@ -21,7 +21,7 @@ var User = require('./models/userModel');
 // Controllers
 var userManagement = require('./controllers/userManagementController.js');
 var bookRating = require('./controllers/bookRating.js');
-var bookRating = require('./controllers/bookComment.js');
+var bookComment = require('./controllers/bookComment.js');
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -292,8 +292,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         User.create(req.body)
 
         .then(result => {
-            getAllUsers();
-            res.redirect('/')
+            res.redirect('/myAccount')
         })
         .catch(error => console.error(error))
     });
@@ -324,6 +323,14 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         // If user is not logged in, redirect to login page.
         res.redirect('/login')
     }
+
+    // ========================
+    // Ratings/Comments
+    // ========================
+    app.get('/ratings', (req, res) => {
+        bookRating.test();
+        res.render('index.ejs', { users: allUsers , isLoggedIn: false })
+    });
 
     // ========================
     // Listen

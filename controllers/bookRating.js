@@ -62,3 +62,8 @@ function createRating(a)
     alert(feedback);
     return rating;
 }
+
+exports.test = function()
+{
+  console.log('I work at LAAAAAAAAAAST');
+}
