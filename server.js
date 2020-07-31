@@ -304,7 +304,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         res.render('WishlistManagement.ejs', {loggedInUser: req.user});
     })
 
-    app.post('/addBook', isLoggedIn, (req,res) => {
+    app.post('/addBook', isLoggedIn, async (req,res) => {
         
         let currentUser = req.user;
 
@@ -312,9 +312,9 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         console.log(req.body);
         let conditions = { _id: req.user.id };
 
-        User.findOneAndUpdate( 
+        const addBook = await User.findOneAndUpdate( 
             {conditions}, 
-            {$set: currentUser, $addToSet: {listContents: req.body.listContents}},
+            {$set: currentUser, $addToSet: {listContents: [req.body.listContents]}},
             {runValidators: true, useFindAndModify: false}, function(err,data){
                 if (err)
                 {

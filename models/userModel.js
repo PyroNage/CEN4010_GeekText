@@ -49,7 +49,7 @@ var WishlistSchema = mongoose.Schema({
     },
     listContents: {
         type: [String],
-        default: []
+        default: ["Harry Potter", "Lord of the Rings", "Jason Bourne"] //Test to see if list prints
     }
 });
 
