@@ -1,7 +1,10 @@
 const express = require('express');
 var router = express.Router();
+const config = require('../config');
 const mongoose = require('mongoose');
-const Book = mongoose.model('Book')
+const bodyParser = require('body-parser');
+// const Book = mongoose.model('Book')
+var Book = require('../models/book.model');
 //const Author = mongoose.model('Author');
 
 
@@ -33,11 +36,13 @@ router.get('/',(req,res)=>{
     });
 });
 
-router.post('/',(req,res) =>{
-    if (req.body._id === '')
-        insertBook(req,res);
-    else
+router.post('/', (req, res) => {
+    if (req.body._id === '') {
+        req.body._id = undefined;
+        insertBook(req, res);
+    } else {
         updateBook(req, res);
+    }
 });
 
 router.get('/list', (req, res) => {
@@ -56,24 +61,14 @@ router.get('/list', (req, res) => {
     });
 });
 
-function insertBook(req,res){
-    var book = new Book();
-    book.title = req.body.title;
-    book.author = req.body.author;
-    book.description = req.body.description;
-    book.isbn = req.body.isbn;
-    book.price = req.body.price;
-    book.genre = req.body.genre;
-    book.publisher = req.body.publisher;
-    book.yearPublished = req.body.yearPublished;
-    book.copiesSold = req.body.copiesSold;
-    book.save((err, doc) => {
-        if(!err)
-            res.redirect('http://localhost:3000/book/list');
-        else
-            console.log('Error during record insertion : ' + err);
-    });
-}
+async function insertBook(req, res) {
+    Book.create(req.body)
+
+    .then(result => {
+        res.redirect('http://localhost:3000/book/list');
+    })
+    .catch(error => console.log('Error during record insertion : ' + error))
+};
 
 function updateBook(req, res) {
     Book.findOneAndUpdate({ _id: req.body._id }, req.body, { new: true, useFindAndModify: true }, (err, doc) => {

@@ -6,6 +6,10 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
+const exphbs = require('express-handlebars');
+const path = require('path');
+
+// require('./models/db');
 
 const initializePassport = require('./passport-config');
 initializePassport(passport,
@@ -22,6 +26,9 @@ var User = require('./models/userModel');
 var userManagement = require('./controllers/userManagementController.js');
 var bookRating = require('./controllers/bookRating.js');
 var bookComment = require('./controllers/bookComment.js');
+
+const authorController = require('./controllers/authorController');
+const bookController = require('./controllers/bookController');
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -92,8 +99,16 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         saveUninitialized: false
     }));
 
+    app.set('views', path.join(__dirname, '/views/'));
+    app.engine('hbs', exphbs({ extname: 'hbs', defaultLayout: 'mainLayout', layoutDir: __dirname + 'views/layouts/' }));
+
     app.use(passport.initialize());
     app.use(passport.session());
+
+    // Regine server
+
+    app.use('/book', bookController);
+    app.use('/author', authorController);
 
     // ========================
     // Routes
@@ -342,32 +357,3 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     })
   })
   .catch(console.error)
-
-// -------------------------------------------------------
-// REGINE'S SERVER
-// -------------------------------------------------------
-require('./models/db');
-
-const path = require('path');
-//var express = require('express');
-const exphbs = require('express-handlebars');
-const bodyparser = require('body-parser');
-//var app = express();
-
-const authorController = require('./controllers/authorController');
-const bookController = require('./controllers/bookController');
-
-
-app.use(bodyparser.urlencoded({
-    extended:true
-}));
-app.use(bodyparser.json());
-app.set('views', path.join(__dirname, '/views/'));
-app.engine('hbs',exphbs({extname: 'hbs', defaultLayout: 'mainLayout', layoutDir: __dirname + 'views/layouts/'}));
-//app.set('view engine','hbs');
-//app.listen(3000, () => {
-    //console.log('Express server started at port: 3000');
-//});
-
-app.use('/book', bookController);
-app.use('/author', authorController);

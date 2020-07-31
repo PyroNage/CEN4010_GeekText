@@ -39,4 +39,4 @@ var bookSchema = new mongoose.Schema({
 
 
 //employeeSchema.path;
-mongoose.model('Book', bookSchema);
+module.exports = mongoose.model('Book', bookSchema);

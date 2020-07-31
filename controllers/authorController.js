@@ -4,7 +4,8 @@ const express = require('express');
 var router = express.Router();
 const mongoose = require('mongoose');
 //const Book = mongoose.model('Book')
-const Author = mongoose.model('Author');
+//const Author = mongoose.model('Author');
+var Author = require('../models/author.model');
 
 
 //AUTHOR
