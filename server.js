@@ -332,7 +332,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
 
 
         // If req.body.listName == any of current users's Wishlist.listname
-        for(i = 0; i < currentUser.Wishlist.length; i++){
+        for(let i = 0; i < currentUser.Wishlist.length; i++){
             if(currentUser.Wishlist[i].listName == req.body.listName){
                 // Wishlist name in form matches a wishlist in the user object
                 currentUser.Wishlist[i].listContents.push(req.body.listContents);
@@ -377,7 +377,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         let conditions = { _id: req.user.id };
 
         // If req.body.listName == any of current users's Wishlist.listname
-        for(i = 0; i < currentUser.Wishlist.length; i++){
+        for(let i = 0; i < currentUser.Wishlist.length; i++){
             if(currentUser.Wishlist[i].listName == req.body.listName){
                 if (currentUser.Wishlist[i].listContents.length == 0 || currentUser.Wishlist[i].listContents == undefined)
                 {
