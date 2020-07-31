@@ -305,15 +305,67 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     })
 
     app.post('/addBook', isLoggedIn, (req,res) => {
+        
         let currentUser = req.user;
+
         currentUser.Wishlist.push(req.body);
+        console.log(req.body);
         let conditions = { _id: req.user.id };
+
+        User.findOneAndUpdate( 
+            {conditions}, 
+            {$set: currentUser, $addToSet: {listContents: req.body.listContents}},
+            {runValidators: true, useFindAndModify: false}, function(err,data){
+                if (err)
+                {
+                    console.log("An error occurred adding the book to the wishlist.");
+                    console.log(err);
+                    return res.status(401).json({'Error adding book': err});
+    
+                }
+                console.log('Successfully added the book.');
+                res.redirect('/Wishlist');
+    
+            }
+        );
+        
+        /**const addBook = User.updateOne(
+            {listName: wishlistName},
+            {$addToSet: {listContents: [newBook]}}
+        );
+        res.redirect('/Wishlist');
+
+        for (let i = 0; i < currentUser.Wishlist.length; i++)
+        {
+            var wishlistName = req.body.listName;
+            if (currentUser.Wishlist[i].listName == wishlistName)
+            {
+                console.log("List found!");
+                let newBook = req.body.listContents;
+                currentUser.Wishlist.push(newBook);
+                let conditions = { _id: req.user.id };
+
+                User.find({listName: wishlistName}, function (err, user) {
+                    if(err){
+                        res.status(500).json(err);
+                    }
+                    else{
+                        const addBook = await Wishlist.updateOne(
+                            {_id: req.params.listId},
+                            {$addToSet: {listContents: [newBook]}}
+                        );
+                        res.redirect('/Wishlist');
+                    }
+                });
+            }
+        }
 
         User.find({listName: req.body.listName}, function (err, user) {
             if(err){
                 res.status(500).json(err);
             }
             else{
+                res.render('WishlistManagement.ejs')
                 User.findOneAndUpdate(conditions,{$set: currentUser}, {runValidators: true, useFindAndModify: false}, function(err,data){
                     if(err){
                         console.log("An error occurred adding the book to the wishlist.");
@@ -324,7 +376,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
                 });
                 res.redirect('/Wishlist');
             }
-        });
+        });**/
     });
     
     
