@@ -8,7 +8,8 @@ const user = require('../models/userModel');
 
 function createComment(book, user)
 {
-    // HOW DO I CREATE A TEXT PROMPT FOR COMMENTS???
+    // Create comment property in book object
+    // Or create new list of comments for one book
     let commentStr = prompt('Comment test');
     let comment = String(commentStr);
 

@@ -6,6 +6,7 @@
 
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const { list } = require('pm2');
 const Schema = mongoose.Schema;
 
 /**
@@ -67,6 +68,14 @@ var UserSchema = new Schema({
         type: String,
         default: ''
     },
+    // bookComment: {
+    //     type: list,
+    //     default: ''
+    // },
+    // bookRating: {
+    //     type: list,
+    //     default: ''
+    // },
     // creditCards is an array storing our creditCard objects
     creditCards: [creditCard]
 });

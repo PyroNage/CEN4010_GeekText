@@ -12,16 +12,12 @@
 </div>
 
 <section data-position="create-rating">
-    <h2>Enter Rating Attributes</h2>
+    <h2>Enter Rating for [TITLE OF BOOK]</h2>
 
-    <div class="ratings">
-        <p class="pull-right"> reviews</p>
-        <p>
-            <% for (var i = 0; i < 5; i++) { %>
-                <span class="glyphicon glyphicon-star<%= (i < star_rating - 0.5)? '' : '-empty'%>"></span>
-            <% } %>
-        </p>
-    </div>
+    <form action="/createRating" method="POST">
+        
+        <button type="submit">Submit</button>
+    </form>
 </section>
 
 <script src="/main.js"></script>

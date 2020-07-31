@@ -335,6 +335,15 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         bookRating.test();
         res.render('createRating.ejs', { users: allUsers , isLoggedIn: false })
     });
+    app.post('/createRating', async (req, res) => {
+        bookRating.createRating(req);
+    });
+    app.get('/createComment', (req, res) => {
+        res.render('createComment.ejs', { users: allUsers , isLoggedIn: false })
+    });
+    app.post('/createComment', async (req, res) => {
+        bookComment.createComment(req);
+    });
 
     // ========================
     // Listen

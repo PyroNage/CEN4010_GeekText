@@ -1,14 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const config = require('../config');
+var router = express.Router();
 const mongoose = require('mongoose');
 const app = express();
-const book = require('../models/book.model');
-const user = require('../models/userModel');
+const Book = require('../models/book.model.js')
 
-function createRating(book, user)
+function createRating()
 {
-    // HOW DO I CREATE A PROMPT FOR RATINGS???
+    //
     let ratingStr = prompt('Comment test');
     let rating = Int(commentStr);
 
@@ -22,5 +22,6 @@ function createRating(book, user)
 
 exports.test = function()
 {
+  let star_rating = 5;
   console.log('I work at LAAAAAAAAAAST');
 }
