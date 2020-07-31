@@ -21,7 +21,11 @@
 
     <section data-position="remove-book">
         <h2>Transfer Book to Shopping Cart</h2>
-        <p>Placeholder</p>
+        <form action="/removeBook" method="POST">
+            <input type="text" placeholder="Wishlist Name" name="listName"/><br>
+            <input type="text" placeholder="Book Title" name="listContents"/><br>
+            <button type="submit">Remove Book</button>
+        </form>
     </section>
     <script src="/main.js"></script>
 </body>

@@ -11,7 +11,6 @@
 
     <section data-position="create-user">
         <h2>Your Wishlists</h2>
-        <%= loggedInUser.Wishlist[0].listContents.length %>
         <ul>
             <% if(loggedInUser.Wishlist.length != 0) { %>
                 <% for(var i = 0; i < loggedInUser.Wishlist.length; i++) { %>

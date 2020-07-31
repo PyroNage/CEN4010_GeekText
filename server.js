@@ -326,25 +326,27 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     app.post('/addBook', isLoggedIn, (req,res) => {
         
         let currentUser = req.user;
-
-        currentUser.Wishlist.push(req.body);
-        console.log(req.body);
+        //console.log(req.body);
+        //console.log(currentUser);
         let conditions = { _id: req.user.id };
 
-        for (let i = 0; i < currentUser.Wishlist.length; i++)
-        {
-            if (req.body.listName == currentUser.Wishlist[i].listName)
-            {
+
+        // If req.body.listName == any of current users's Wishlist.listname
+        for(i = 0; i < currentUser.Wishlist.length; i++){
+            if(currentUser.Wishlist[i].listName == req.body.listName){
+                // Wishlist name in form matches a wishlist in the user object
+                currentUser.Wishlist[i].listContents.push(req.body.listContents);
+                console.log(req.body);
+                console.log(currentUser);
                 User.findOneAndUpdate( 
-                    {conditions}, 
-                    {$set: currentUser.Wishlist[i].listName, $addToSet: {Wishlist: {listContents: [req.body.listContents]}}},
-                    {/*runValidators: true,*/ useFindAndModify: false}, function(err,data){
+                    conditions, 
+                    {$set: currentUser},
+                    {runValidators: true, useFindAndModify: false}, function(err,data){
                         if (err)
                         {
                             console.log("An error occurred adding the book to the wishlist.");
                             console.log(err);
                             return res.status(401).json({'Error adding book': err});
-            
                         }
                         console.log('Successfully added the book.');
                         res.redirect('/Wishlist');
@@ -352,84 +354,63 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
                     }
                 );
                 break;
-            }
-        }
-
-        /**User.findOneAndUpdate( 
-            {conditions}, 
-            {$set: currentUser, Wishlist: {listName: req.body.listName}, $addToSet: {Wishlist: {listContents: [req.body.listContents]}}},
-            {runValidators: true, useFindAndModify: false}, function(err,data){
-                if (err)
-                {
-                    console.log("An error occurred adding the book to the wishlist.");
-                    console.log(err);
-                    return res.status(401).json({'Error adding book': err});
-    
+            } 
+            else {
+                // No wishlist in user had the name given, let's check if we have 3 wishlist's already
+                if(currentUser.Wishlist.length < 3){
+                    currentUser.Wishlist.push(req.body);
+                } else {
+                // Too many wishlist objects
+                console.log("Too many wishlist objects.");
                 }
-                console.log('Successfully added the book.');
-                res.redirect('/Wishlist');
-    
-            }
-        );**/
-        
-        /**const addBook = User.updateOne(
-            {listName: wishlistName},
-            {$addToSet: {listContents: [newBook]}}
-        );
-        res.redirect('/Wishlist');
-
-        for (let i = 0; i < currentUser.Wishlist.length; i++)
-        {
-            var wishlistName = req.body.listName;
-            if (currentUser.Wishlist[i].listName == wishlistName)
-            {
-                console.log("List found!");
-                let newBook = req.body.listContents;
-                currentUser.Wishlist.push(newBook);
-                let conditions = { _id: req.user.id };
-
-                User.find({listName: wishlistName}, function (err, user) {
-                    if(err){
-                        res.status(500).json(err);
-                    }
-                    else{
-                        const addBook = await Wishlist.updateOne(
-                            {_id: req.params.listId},
-                            {$addToSet: {listContents: [newBook]}}
-                        );
-                        res.redirect('/Wishlist');
-                    }
-                });
             }
         }
 
-        User.find({listName: req.body.listName}, function (err, user) {
-            if(err){
-                res.status(500).json(err);
-            }
-            else{
-                res.render('WishlistManagement.ejs')
-                User.findOneAndUpdate(conditions,{$set: currentUser}, {runValidators: true, useFindAndModify: false}, function(err,data){
-                    if(err){
-                        console.log("An error occurred adding the book to the wishlist.");
-                        console.log(err);
-                        return res.status(401).json({'Error Adding Book': err});
-                    }
-                    console.log('Successfully Added the Book.');
-                });
-                res.redirect('/Wishlist');
-            }
-        });**/
+        // NOW see where you should put the find one and update
+        //console.log(req.body);
+        //console.log(currentUser);
     });
 
-    /**app.post('/removeBook', isLoggedIn, (req,res) => {
+    app.post('/removeBook', isLoggedIn, (req,res) => {
         let currentUser = req.user;
-
-        currentUser.Wishlist.push(req.body);
         console.log(req.body);
         let conditions = { _id: req.user.id };
 
-    })**/
+        // If req.body.listName == any of current users's Wishlist.listname
+        for(i = 0; i < currentUser.Wishlist.length; i++){
+            if(currentUser.Wishlist[i].listName == req.body.listName){
+                if (currentUser.Wishlist[i].listContents.length == 0 || currentUser.Wishlist[i].listContents == undefined)
+                {
+                    console.log('This wishlist is empty.');
+                    res.redirect('/Wishlist');
+                }
+                else {
+                    // Wishlist name in form matches a wishlist in the user object
+                    currentUser.Wishlist[i].listContents.pull(req.body.listContents);
+                    console.log(req.body);
+                    console.log(currentUser);
+                    User.findOneAndUpdate(
+                        conditions,
+                        {$set: currentUser},
+                        {runValidators: true, useFindAndModify: false}, function(err,data){
+                            if(err)
+                            {
+                                console.log("An error occurred removing the book to the wishlist.");
+                                console.log(err);
+                                return res.status(401).json({'Error removing book': err});
+                            }
+                            console.log('Successfully removed the book.');
+                            res.redirect('/Wishlist');
+                        }
+                    );
+                    break;
+                }
+            }
+            else {
+                console.log("The wishlist specified does not exist.");
+            }
+        }
+    })
     
     
 

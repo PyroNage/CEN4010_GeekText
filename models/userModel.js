@@ -43,14 +43,13 @@ var creditCard = new Schema({
  * Nested inside the user object.
  */
 
-const WishlistSchema = mongoose.Schema({
+var WishlistSchema = mongoose.Schema({
     listName: {
         type: String,
-        required: true
     },
     listContents: {
         type: [String],
-        default: ["Harry Potter", "Lord of the Rings", "Jason Bourne"]
+        default: []
     }
 });
 
