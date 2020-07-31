@@ -17,4 +17,4 @@ var authorSchema = new mongoose.Schema({
     }
 });
 
-mongoose.model('Author', authorSchema);
+module.exports = mongoose.model('Author', authorSchema);

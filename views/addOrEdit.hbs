@@ -1,12 +1,13 @@
 <h3>{{viewTitle}}</h3>
 <form action="/book" method="POST" autocomplete="off">
-    <input type="hidden" name="_id" value="{{book._id}}">
+<input type="hidden" name="_id" value="{{book._id}}">
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="title">Title</label>
             <input type="text" class="form-control" name="title" placeholder="Title" value="{{book.title}}">
             <div class="text-danger">
-                {{book.TitleError}}</div>
+                {{book.TitleError}}
+            </div>
         </div>
         <div class="form-group col-md-6">
             <label for="author">Author</label>
