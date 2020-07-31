@@ -331,6 +331,10 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         bookRating.test();
         res.render('index.ejs', { users: allUsers , isLoggedIn: false })
     });
+    app.get('/createRating', (req, res) => {
+        bookRating.test();
+        res.render('createRating.ejs', { users: allUsers , isLoggedIn: false })
+    });
 
     // ========================
     // Listen
