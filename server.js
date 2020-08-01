@@ -303,7 +303,6 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     });
 
     app.post('/createWishlist', isLoggedIn, (req,res) => {
-        //var count = await Wishlist.countDocuments();
         let currentUser = req.user;
         currentUser.Wishlist.push(req.body);
         let conditions = { _id: req.user.id };
@@ -326,8 +325,6 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     app.post('/addBook', isLoggedIn, (req,res) => {
         
         let currentUser = req.user;
-        //console.log(req.body);
-        //console.log(currentUser);
         let conditions = { _id: req.user.id };
 
 
@@ -365,10 +362,6 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
                 }
             }
         }
-
-        // NOW see where you should put the find one and update
-        //console.log(req.body);
-        //console.log(currentUser);
     });
 
     app.post('/removeBook', isLoggedIn, (req,res) => {
@@ -376,8 +369,8 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         console.log(req.body);
         let conditions = { _id: req.user.id };
 
-        // If req.body.listName == any of current users's Wishlist.listname
         for(let i = 0; i < currentUser.Wishlist.length; i++){
+            // If req.body.listName == any of current users's Wishlist.listname
             if(currentUser.Wishlist[i].listName == req.body.listName){
                 if (currentUser.Wishlist[i].listContents.length == 0 || currentUser.Wishlist[i].listContents == undefined)
                 {
@@ -412,8 +405,6 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         }
     })
     
-    
-
     /**
      *  ########## End of Wishlist Management routes #################
      */
