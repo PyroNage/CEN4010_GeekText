@@ -21,6 +21,7 @@ const app = express();
 
 // Schema Models
 var User = require('./models/userModel');
+var ShoppingCart = require('./models/shoppingCartModel');
 
 // Controllers
 var userManagement = require('./controllers/userManagementController.js');
@@ -293,6 +294,23 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     /**
      * ########## End of User Management routes #################
      */
+
+    /**
+     * Shopping Cart routes
+     */
+
+    app.get('/manageShoppingCart', isLoggedIn, (req, res) => {
+        ShoppingCart.findOne({ownerID: req.user.id}, (err, sc)=>{
+            if(err) res.status(401).json({'Error adding cart item': err});
+
+            res.render('manageShoppingCart.ejs',{Cart: sc })
+        });
+    });
+
+    
+    /**
+     * End of Shopping Cart routes
+     */
 	 
 	     /**
      *  ########### Wishlist Management Routes #################
@@ -366,7 +384,6 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
 
     app.post('/removeBook', isLoggedIn, (req,res) => {
         let currentUser = req.user;
-        console.log(req.body);
         let conditions = { _id: req.user.id };
 
         for(let i = 0; i < currentUser.Wishlist.length; i++){
@@ -378,7 +395,25 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
                     res.redirect('/Wishlist');
                 }
                 else {
-                    // Wishlist name in form matches a wishlist in the user object
+                    // Wishlist name in form matches a wishlist in the user object                    
+                    ShoppingCart.findOne({ownerID: req.user.id},{_id:0}, function(err,cart){
+                        if(err) return res.status(401).json({'Error adding cart item': err});
+                        else{
+                                if(cart.isbn.length <10){
+                                cart.isbn.push(req.body.listContents);
+                                cart.quantity.push(1);
+                                ShoppingCart.findOneAndUpdate({ownerID: req.user.id},{$set: cart},function(err,Cart){
+                                    if(err) return res.status(401).json({'Error adding cart item': err});
+                                    res.redirect('/manageShoppingCart');
+                });
+                                }
+                                else{
+                alert("Your cart is full!");
+                res.redirect('/Wishlist');
+            }
+        }
+    });
+                                    
                     currentUser.Wishlist[i].listContents.pull(req.body.listContents);
                     console.log(req.body);
                     console.log(currentUser);

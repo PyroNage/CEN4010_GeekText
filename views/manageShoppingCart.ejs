@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create User</title>
+    <link rel="stylesheet" href="/styles.css"/>
+</head>
+
+<body>
+
+<div data-position="header">
+    <!-- the paragraph here is the login button for the User account -->
+    <!-- isLoggedIn is a temporary hardcoded value in the server.js to test ejs conditional statements -->
+    <h1>Your Account</h1> <a style="float: right; margin-top: -2em" href="/myAccount">Return To your Account</a>
+</div>
+
+<section data-position="create-user">
+    <h2>Your Items</h2>
+    <section data-position="credit-cards">
+        <% if (Cart.isbn.length) {
+        %>
+            <% Cart.isbn.forEach((IS) => {
+                var itemIndex = Cart.isbn.indexOf(IS);
+            %>
+                <h3>Book #<%=itemIndex + 1%></h3>
+                <p>ISBN: <%= Cart.isbn[itemIndex]%></p>
+                <p>Quantity: <%= Cart.quantity[itemIndex]%></p>
+                <form action="/deleteBookFromCart?itemIndex=<%=itemIndex%>" method="POST">
+                    <button style="float: right; margin-top: -2em; background-color: #9090a0;" class="login-button" type="submit">Delete Cart Item #<%=itemIndex + 1%></button>
+                </form>
+                <hr>
+            <%
+            }) %>
+            <%
+        } %>
+    </section>
+</section>
+
+<section data-position="credit-cards">
+    <h2>Add a Book to Cart</h2>
+        <form action="/addBookToCart" method="POST">
+            <input type="text" placeholder="ISBN of Book" name="ISBN"/> <br>
+            <input type="number" placeholder="Quantity to Buy" name="Quant"/><br>
+            <button type="submit">Add Book</button>
+        </form>
+</section>
+<section> </section>
+
+<section> </section>
+
+<section>
+    <form action="/">
+        <button style="width: 100%; background-color: #9090a0;" class="login-button" type="submit">Return to home</button>
+    </form>
+</section>
+
+<script src="/main.js"></script>
+</body>
+</html>
+
