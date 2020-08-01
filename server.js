@@ -6,10 +6,6 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
-const exphbs = require('express-handlebars');
-const path = require('path');
-
-// require('./models/db');
 
 const initializePassport = require('./passport-config');
 initializePassport(passport,
@@ -21,14 +17,13 @@ const app = express();
 
 // Schema Models
 var User = require('./models/userModel');
-var ShoppingCart = require('./models/shoppingCartModel');
+var ShoppingCart = require('./models/cartModel');
+var Book = require('./models/book.model');
 
 // Controllers
 var userManagement = require('./controllers/userManagementController.js');
-
-const authorController = require('./controllers/authorController');
-const bookController = require('./controllers/bookController');
-const ratingCommentController = require('./controllers/ratingCommentController');
+var bookRating = require('./controllers/bookRating.js');
+var bookRating = require('./controllers/bookComment.js');
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -84,11 +79,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     // ========================
     // Middlewares
     // ========================
-    var engine = require('consolidate');
-
-    app.engine('ejs',engine.ejs);
-    app.engine('handlebars', engine.handlebars);
-
+    app.set('view engine', 'ejs');
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(express.static('public'));
@@ -99,17 +90,8 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         saveUninitialized: false
     }));
 
-    app.set('views', path.join(__dirname, '/views/'));
-    app.engine('hbs', exphbs({ extname: 'hbs', defaultLayout: 'mainLayout', layoutDir: __dirname + 'views/layouts/' }));
-
     app.use(passport.initialize());
     app.use(passport.session());
-
-    // Regine server
-
-    app.use('/book', bookController);
-    app.use('/author', authorController);
-    app.use('/ratingComment', ratingCommentController);
 
     // ========================
     // Routes
@@ -164,7 +146,8 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         res.render('signup.ejs')
     });
 
-    app.post('/signup', async (req, res) => {
+//James Made a change here//
+   app.post('/signup', async (req, res) => {
         try {
             // Hashed password to store in db
             req.body.password = await bcrypt.hash(req.body.password, 10)
@@ -176,7 +159,10 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
                     res.status(500).json({'Error creating user': err});
                 } else {
                     // Since there is no error, return to home. (We definitely want to log in the user here before we return home)
-                    res.redirect('/login')
+			ShoppingCart.create({isbn: [],quantity:[],ownerID: user.id}, function(err,cart){
+				if(err) res.status(500).json({'Error creating cart': err});
+				else res.redirect('/login');
+			});
                 }
             });
         } catch {
@@ -295,156 +281,62 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
      * ########## End of User Management routes #################
      */
 
-    /**
-     * Shopping Cart routes
-     */
+/**
+*
+*------------Beginning of Shopping Cart routes ------------------
+*
+*/
 
-    app.get('/manageShoppingCart', isLoggedIn, (req, res) => {
-        ShoppingCart.findOne({ownerID: req.user.id}, (err, sc)=>{
-            if(err) res.status(401).json({'Error adding cart item': err});
+ 	app.get('/manageShoppingCart', isLoggedIn, (req, res) => {
+		ShoppingCart.findOne({ownerID: req.user.id}, (err, sc)=>{
+			if(err) res.status(401).json({'Error adding cart item': err});
+			
+			res.render('manageShoppingCart.ejs',{Cart: sc })
+		});
+	});
 
-            res.render('manageShoppingCart.ejs',{Cart: sc })
-        });
-    });
-
-    
-    /**
-     * End of Shopping Cart routes
-     */
-	 
-	     /**
-     *  ########### Wishlist Management Routes #################
-     */
-
-    app.get('/Wishlist', isLoggedIn, (req, res) => {
-        res.render('Wishlist.ejs', { loggedInUser: req.user});
-    });
-
-    app.post('/createWishlist', isLoggedIn, (req,res) => {
+    app.post('/addBookToCart', isLoggedIn, (req, res) => {
         let currentUser = req.user;
-        currentUser.Wishlist.push(req.body);
-        let conditions = { _id: req.user.id };
+	console.log(req.body);	
 
-        User.findOneAndUpdate(conditions,{$set: currentUser}, {runValidators: true, useFindAndModify: false}, function(err,data){
-            if(err){
-                console.log("An error occurred creating the wishlist.");
-                console.log(err);
-                return res.status(401).json({'Error Creating Wishlist': err});
-            }
-            console.log('Successfully Created the Wishlist.');
-            res.redirect('/Wishlist');
-        });
+        ShoppingCart.findOne({ownerID: req.user.id},{_id:0}, function(err,cart){
+		if(err) return res.status(401).json({'Error adding cart item': err});
+		else{
+			if(cart.isbn.length <10){
+				cart.isbn.push(req.body.ISBN);
+				cart.quantity.push(req.body.Quant);
+				ShoppingCart.findOneAndUpdate({ownerID: req.user.id},{$set: cart},function(err,Cart){
+					if(err) return res.status(401).json({'Error adding cart item': err});
+					res.redirect('/manageShoppingCart');
+				});
+			}
+			else{
+				alert("Your cart is full!");
+			}
+		}
+	});
     });
 
-    app.get('/WishlistManagement', isLoggedIn, (req, res) => {
-        res.render('WishlistManagement.ejs', {loggedInUser: req.user});
-    })
-
-    app.post('/addBook', isLoggedIn, (req,res) => {
-        
-        let currentUser = req.user;
-        let conditions = { _id: req.user.id };
-
-
-        // If req.body.listName == any of current users's Wishlist.listname
-        for(let i = 0; i < currentUser.Wishlist.length; i++){
-            if(currentUser.Wishlist[i].listName == req.body.listName){
-                // Wishlist name in form matches a wishlist in the user object
-                currentUser.Wishlist[i].listContents.push(req.body.listContents);
-                console.log(req.body);
-                console.log(currentUser);
-                User.findOneAndUpdate( 
-                    conditions, 
-                    {$set: currentUser},
-                    {runValidators: true, useFindAndModify: false}, function(err,data){
-                        if (err)
-                        {
-                            console.log("An error occurred adding the book to the wishlist.");
-                            console.log(err);
-                            return res.status(401).json({'Error adding book': err});
-                        }
-                        console.log('Successfully added the book.');
-                        res.redirect('/Wishlist');
-            
-                    }
-                );
-                break;
-            } 
-            else {
-                // No wishlist in user had the name given, let's check if we have 3 wishlist's already
-                if(currentUser.Wishlist.length < 3){
-                    currentUser.Wishlist.push(req.body);
-                } else {
-                // Too many wishlist objects
-                console.log("Too many wishlist objects.");
-                }
-            }
-        }
+    app.post('/deleteBookFromCart', isLoggedIn, (req, res) => {
+        let index = req.query.itemIndex;
+	if(index > -1){
+		ShoppingCart.findOne({ownerID: req.user.id},function(err,cart){
+			if(err) res.status(401).json({'Error deleting cart item': err});
+			cart.isbn.splice(index,1);
+			cart.quantity.splice(index,1);
+			ShoppingCart.findOneAndUpdate({ownerID: req.user.id},{$set: cart}, function(err,Cart){
+				if(err) res.status(401).json({'Error updating cart': err});
+				res.redirect('/manageShoppingCart');
+			});
+		});	
+	}
     });
 
-    app.post('/removeBook', isLoggedIn, (req,res) => {
-        let currentUser = req.user;
-        let conditions = { _id: req.user.id };
-
-        for(let i = 0; i < currentUser.Wishlist.length; i++){
-            // If req.body.listName == any of current users's Wishlist.listname
-            if(currentUser.Wishlist[i].listName == req.body.listName){
-                if (currentUser.Wishlist[i].listContents.length == 0 || currentUser.Wishlist[i].listContents == undefined)
-                {
-                    console.log('This wishlist is empty.');
-                    res.redirect('/Wishlist');
-                }
-                else {
-                    // Wishlist name in form matches a wishlist in the user object                    
-                    ShoppingCart.findOne({ownerID: req.user.id},{_id:0}, function(err,cart){
-                        if(err) return res.status(401).json({'Error adding cart item': err});
-                        else{
-                                if(cart.isbn.length <10){
-                                cart.isbn.push(req.body.listContents);
-                                cart.quantity.push(1);
-                                ShoppingCart.findOneAndUpdate({ownerID: req.user.id},{$set: cart},function(err,Cart){
-                                    if(err) return res.status(401).json({'Error adding cart item': err});
-                                    res.redirect('/manageShoppingCart');
-                });
-                                }
-                                else{
-                alert("Your cart is full!");
-                res.redirect('/Wishlist');
-            }
-        }
-    });
-                                    
-                    currentUser.Wishlist[i].listContents.pull(req.body.listContents);
-                    console.log(req.body);
-                    console.log(currentUser);
-                    User.findOneAndUpdate(
-                        conditions,
-                        {$set: currentUser},
-                        {runValidators: true, useFindAndModify: false}, function(err,data){
-                            if(err)
-                            {
-                                console.log("An error occurred removing the book to the wishlist.");
-                                console.log(err);
-                                return res.status(401).json({'Error removing book': err});
-                            }
-                            console.log('Successfully removed the book.');
-                            res.redirect('/Wishlist');
-                        }
-                    );
-                    break;
-                }
-            }
-            else {
-                console.log("The wishlist specified does not exist.");
-            }
-        }
-    })
-    
-    /**
-     *  ########## End of Wishlist Management routes #################
-     */
-
-
+/**
+*
+*------------End of Shopping Cart routes ------------------------
+*
+*/
 
     // Page to create user
     app.get('/createUser', (req, res) => {
@@ -489,13 +381,6 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         // If user is not logged in, redirect to login page.
         res.redirect('/login')
     }
-
-    // ========================
-    // Ratings/Comments
-    // ========================
-    app.post('/ratingComment/:id', (req,res) => {
-        
-    });
 
     // ========================
     // Listen
