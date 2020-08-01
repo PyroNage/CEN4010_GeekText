@@ -1,20 +1,46 @@
-<h3><a class="btn btn-secondary" href="/book"><i class="fa fa-plus"></i> Create New</a> Book List</h3>
+
+<table class="table table-striped">
+    <form action="/book/sortedListBySales" method="GET">
+        <button style="float: right" type="submit">Top 10 Sales</button>
+        <h0 style="float: right;" >Sort by: &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp;  &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; </h0>
+        <br><br>
+    </form>
+    <form action="/book/sortedListByRating" method="GET">
+        <input type="number" style="float: right;" class="form-group col-md-5" name="Rating" placeholder="Rating"
+            value="{{book.rating}}">
+        <button style="float: right" type="submit">Rating</button>
+        <br><br>
+    </form>
+    <form action="/book/sortedListByGenre" method="GET">
+        <input type="text" style="float: right;" class="form-group col-md-5" name="Genre" placeholder="Genre"
+            value="{{book.genre}}">
+        <button style="float: right" type="submit">Genre</button>
+        <br><br>
+    </form>
+    <form action="/book/list" method="GET">
+        <input type="number" style="float: right;" class="form-group col-md-5" name="maxBooks" placeholder="maxBooks"
+            value="{{maxBooks}}">
+        <button style="float: right" type="submit">Max # of books</button>
+        <br><br>
+    </form>
+    <h3><a class="btn btn-secondary" href="/book"><i class="fa fa-plus"></i> Create New Book</a> Book List</h3>
+</table>
 <table class="table table-striped">
     <thead>
-    <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Description</th>
-        <th>Isbn</th>
-        <th>Price</th>
-        <th>Genre</th>
-        <th>Publisher</th>
-        <th>Year Published</th>
-        <th>Copies Sold</th>
-    </tr>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Description</th>
+            <th>Isbn</th>
+            <th>Price</th>
+            <th>Genre</th>
+            <th>Publisher</th>
+            <th>Year Published</th>
+            <th>Copies Sold</th>
+        </tr>
     </thead>
     <tbody>
-    {{#each list}}
+        {{#each list}}
         <tr>
             <td>{{this.title}}</td>
             <td>{{this.author}}</td>
@@ -28,9 +54,10 @@
             <th></th>
             <td>
                 <a href="/book/{{this._id}}"><i class="fa fa-pencil fa-lg" aria-hidden="true"></i></a>
-                <a href="/book/delete/{{this.id}}" onclick="return confirm('Are you sure to delete this record ?');"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
+                <a href="/book/delete/{{this.id}}" onclick="return confirm('Are you sure to delete this record ?');"><i
+                        class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
             </td>
         </tr>
-    {{/each}}
+        {{/each}}
     </tbody>
 </table>

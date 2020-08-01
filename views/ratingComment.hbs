@@ -1,0 +1,25 @@
+<h3><a class="btn btn-secondary" href="/ratingComment/addOrEdit/"><i class="fa fa-plus"></i> Create New</a> Book List
+</h3>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ISBN</th>
+        <th>Comments</th>
+        <th>Ratings</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each ratingComment}}
+        <tr>
+            <td>{{this.rc_isbn}}</td>
+            <td>{{this.comments}}</td>
+            <td>{{this.ratings}}</td>
+            <th></th>
+            <td>
+                <a href="/ratingComment/{{this._id}}"><i class="fa fa-star fa-lg" aria-hidden="true"></i></a>
+            </td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>

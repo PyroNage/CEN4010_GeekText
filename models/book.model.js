@@ -34,7 +34,11 @@ var bookSchema = new mongoose.Schema({
     },
     copiesSold: {
         type: Number
-    }
+    },
+    ratings: {
+        type: Number
+    },
+    comments: [String]
 });
 
 
