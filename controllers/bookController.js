@@ -113,7 +113,7 @@ router.get('/sortedListByRating', (req, res) => {
             console.log('Error in retrieving book list :' + err);
         }
     });
-});v
+});
 
 //Must only list books of a particular genre and a given amount of books (limit)
 //  Need user input on the genre and the limit
