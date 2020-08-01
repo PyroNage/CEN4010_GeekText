@@ -39,6 +39,22 @@ var creditCard = new Schema({
     }
 });
 
+/**
+ * Wishlist Data object.
+ * Nested inside the user object.
+ */
+
+var WishlistSchema = mongoose.Schema({
+    listName: {
+        type: String,
+    },
+    listContents: {
+        type: [String],
+        default: []
+    }
+});
+
+
 var UserSchema = new Schema({
     firstName: {
         type: String,
@@ -77,7 +93,8 @@ var UserSchema = new Schema({
     //     default: ''
     // },
     // creditCards is an array storing our creditCard objects
-    creditCards: [creditCard]
+    creditCards: [creditCard],
+    Wishlist: [WishlistSchema]
 });
 
 UserSchema.methods.validPassword = function(password) {
