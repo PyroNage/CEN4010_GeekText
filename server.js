@@ -17,7 +17,7 @@ const app = express();
 
 // Schema Models
 var User = require('./models/userModel');
-var ShoppingCart = require('./models/cartModel');
+var ShoppingCart = require('./models/shoppingCartModel');
 var Book = require('./models/book.model');
 
 // Controllers
