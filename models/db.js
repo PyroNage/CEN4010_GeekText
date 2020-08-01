@@ -7,3 +7,4 @@ mongoose.connect('mongodb://ds245677.mlab.com:45677/cen4010project', {user:"admi
 
 require('./book.model');
 require('./author.model');
+require('./ratingComment.model');

@@ -6,6 +6,7 @@
 
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const { list } = require('pm2');
 const Schema = mongoose.Schema;
 
 /**
@@ -38,6 +39,22 @@ var creditCard = new Schema({
     }
 });
 
+/**
+ * Wishlist Data object.
+ * Nested inside the user object.
+ */
+
+var WishlistSchema = mongoose.Schema({
+    listName: {
+        type: String,
+    },
+    listContents: {
+        type: [String],
+        default: []
+    }
+});
+
+
 var UserSchema = new Schema({
     firstName: {
         type: String,
@@ -67,8 +84,17 @@ var UserSchema = new Schema({
         type: String,
         default: ''
     },
+    // bookComment: {
+    //     type: list,
+    //     default: ''
+    // },
+    // bookRating: {
+    //     type: list,
+    //     default: ''
+    // },
     // creditCards is an array storing our creditCard objects
-    creditCards: [creditCard]
+    creditCards: [creditCard],
+    Wishlist: [WishlistSchema]
 });
 
 UserSchema.methods.validPassword = function(password) {
