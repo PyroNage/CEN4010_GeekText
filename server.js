@@ -24,11 +24,10 @@ var User = require('./models/userModel');
 
 // Controllers
 var userManagement = require('./controllers/userManagementController.js');
-var bookRating = require('./controllers/bookRating.js');
-var bookComment = require('./controllers/bookComment.js');
 
 const authorController = require('./controllers/authorController');
 const bookController = require('./controllers/bookController');
+const ratingCommentController = require('./controllers/ratingCommentController');
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -109,6 +108,7 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
 
     app.use('/book', bookController);
     app.use('/author', authorController);
+    app.use('/ratingComment', ratingCommentController);
 
     // ========================
     // Routes
@@ -342,22 +342,8 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     // ========================
     // Ratings/Comments
     // ========================
-    app.get('/ratings', (req, res) => {
-        bookRating.test();
-        res.render('index.ejs', { users: allUsers , isLoggedIn: false })
-    });
-    app.get('/createRating', (req, res) => {
-        bookRating.test();
-        res.render('createRating.ejs', { users: allUsers , isLoggedIn: false })
-    });
-    app.post('/createRating', async (req, res) => {
-        bookRating.createRating(req);
-    });
-    app.get('/createComment', (req, res) => {
-        res.render('createComment.ejs', { users: allUsers , isLoggedIn: false })
-    });
-    app.post('/createComment', async (req, res) => {
-        bookComment.createComment(req);
+    app.post('/ratingComment/:id', (req,res) => {
+        
     });
 
     // ========================
