@@ -30,7 +30,7 @@ router.post('/result',(req,res) => {
 })
 
 //BOOK
-router.get('/',(req,res)=>{
+router.get('/', (req,res)=>{
     res.render("addOrEdit.hbs", {
         viewTitle: "Insert Book"
     });
@@ -46,7 +46,79 @@ router.post('/', (req, res) => {
 });
 
 router.get('/list', (req, res) => {
-    Book.find((err, docs) => {
+    if(req.query.maxBooks != null)
+    {
+        Book.find({}, null, {limit: parseInt(req.query.maxBooks)}, (err, docs) => {
+            if (!err) {
+                res.render("list.hbs", {
+                    list: docs, 
+                });
+            }
+            else if(req.query.search) {
+
+            }
+            else {
+                console.log('Error in retrieving book list with desired size:' + err);
+            }
+        });
+    }
+    else
+    {
+        Book.find((err, docs) => {
+            if (!err) {
+                res.render("list.hbs", {
+                    list: docs
+                });
+            }
+            else if(req.query.search) {
+    
+            }
+            else {
+                console.log('Error in retrieving book list :' + err);
+            }
+        });
+    }
+});
+
+//Must retrieve top 10 books by sales descending
+router.get('/sortedListBySales', (req, res) => {
+    Book.find({}, null, {limit: 10, sort: {copiesSold: -1}}, (err, docs) => {
+        if (!err) {
+            res.render("list.hbs", {
+                list: docs
+            });
+        }
+        else if(req.query.search) {
+
+        }
+        else {
+            console.log('Error in retrieving book list :' + err);
+        }
+    });
+});
+
+//Must retrieve books of a given rating and higher and a given amount of books (limit)
+//  Need user input on the rating and limit
+router.get('/sortedListByRating', (req, res) => {
+    Book.find({bookRating:{$gte:req.body.Rating}}, null, {sort: {bookRating: -1}}, (err, docs) => {
+        if (!err) {
+            res.render("list.hbs", {
+                list: docs
+            });
+        }
+        else if(req.query.search) {
+
+        }
+        else {
+            console.log('Error in retrieving book list :' + err);
+        }
+    });
+});v
+
+//Must only list books of a particular genre and a given amount of books (limit)
+//  Need user input on the genre and the limit
+router.get('/sortedListByGenre', (req, res) => {
+    Book.find({genre: req.query.Genre}, null, (err, docs) => {
         if (!err) {
             res.render("list.hbs", {
                 list: docs
