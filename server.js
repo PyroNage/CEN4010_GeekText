@@ -6,6 +6,10 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const flash = require('express-flash');
 const session = require('express-session');
+const exphbs = require('express-handlebars');
+const path = require('path');
+
+// require('./models/db');
 
 const initializePassport = require('./passport-config');
 initializePassport(passport,
@@ -24,6 +28,9 @@ var Book = require('./models/book.model');
 var userManagement = require('./controllers/userManagementController.js');
 var bookRating = require('./controllers/bookRating.js');
 var bookRating = require('./controllers/bookComment.js');
+const authorController = require('./controllers/authorController');
+const bookController = require('./controllers/bookController');
+const ratingCommentController = require('./controllers/ratingCommentController');
 
 // Replace process.env.DB_URL with your actual connection string
 // const connectionString = process.env.DB_URL =============================
@@ -79,7 +86,11 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
     // ========================
     // Middlewares
     // ========================
-    app.set('view engine', 'ejs');
+    var engine = require('consolidate');
+
+    app.engine('ejs', engine.ejs);
+    app.engine('handlebars', engine.handlebars);
+
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(express.static('public'));
@@ -90,8 +101,17 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         saveUninitialized: false
     }));
 
+    app.set('views', path.join(__dirname, '/views/'));
+    app.engine('hbs', exphbs({ extname: 'hbs', defaultLayout: 'mainLayout', layoutDir: __dirname + 'views/layouts/' }));
+
     app.use(passport.initialize());
     app.use(passport.session());
+
+    // Regine server
+
+    app.use('/book', bookController);
+    app.use('/author', authorController);
+    app.use('/ratingComment', ratingCommentController);
 
     // ========================
     // Routes
@@ -146,23 +166,23 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
         res.render('signup.ejs')
     });
 
-//James Made a change here//
-   app.post('/signup', async (req, res) => {
+    //James Made a change here//
+    app.post('/signup', async (req, res) => {
         try {
             // Hashed password to store in db
             req.body.password = await bcrypt.hash(req.body.password, 10)
 
             User.create(req.body, function (err, user) {
                 // If there is an error creating the user
-                if(err){
+                if (err) {
                     // Return a status 500 (internal server error) with the error object to display
-                    res.status(500).json({'Error creating user': err});
+                    res.status(500).json({ 'Error creating user': err });
                 } else {
                     // Since there is no error, return to home. (We definitely want to log in the user here before we return home)
-			ShoppingCart.create({isbn: [],quantity:[],ownerID: user.id}, function(err,cart){
-				if(err) res.status(500).json({'Error creating cart': err});
-				else res.redirect('/login');
-			});
+                    ShoppingCart.create({ isbn: [], quantity: [], ownerID: user.id }, function (err, cart) {
+                        if (err) res.status(500).json({ 'Error creating cart': err });
+                        else res.redirect('/login');
+                    });
                 }
             });
         } catch {
@@ -288,10 +308,11 @@ var db = mongoose.connect(config.db.uri, config.db.options, function (err) {
 */
 
  	app.get('/manageShoppingCart', isLoggedIn, (req, res) => {
-		ShoppingCart.findOne({ownerID: req.user.id}, (err, sc)=>{
-			if(err) res.status(401).json({'Error adding cart item': err});
-			
-			res.render('manageShoppingCart.ejs',{Cart: sc })
+          ShoppingCart.findOne({ ownerID: req.user.id }, (err, sc) => {
+              if (err) res.status(401).json({ 'Error adding cart item': err });
+              Book.find({}, (err, books) => {
+                  res.render('manageShoppingCart.ejs', { Cart: sc, bookList: books });
+              })
 		});
 	});
 
