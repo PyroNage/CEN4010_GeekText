@@ -145,7 +145,7 @@ async function insertBook(req, res) {
     Book.create(req.body)
 
     .then(result => {
-        res.redirect('http://localhost:3000/book/list');
+        res.redirect('/book/list');
     })
     .catch(error => console.log('Error during record insertion : ' + error))
 };
