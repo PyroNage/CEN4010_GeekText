@@ -1,7 +1,13 @@
 <h3>{{viewTitle}}</h3>
 <form action="/ratingComment" method="POST" autocomplete="off"> <input type="hidden" name="_id" value="{{ratingComment._id}}">
     <div class="form-row">
-        <div class="form-group"> <input type="text" class="form-control" name="rc_isbn" placeholder="Book's ISBN" value="{{ratingComment.rc_isbn}}">
+        <div class="form-group">
+            <h3> Select Book: </h3>
+            <select name="rc_isbn" placeholder="Book's ISBN" value="{{ratingComment.rc_isbn}}">
+                {{#each bookList}}
+                <option value="{{this.isbn}}">{{this.title}}</option>
+                {{/each}}
+            </select><br>
         </div>
     </div>
     <div class="form-row">

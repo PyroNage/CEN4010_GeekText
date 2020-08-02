@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 // const Book = mongoose.model('Book')
 var ratingComment = require('../models/ratingComment.model');
+var Book = require('../models/book.model');
+
 //const Author = mongoose.model('Author');
 
 // router.get('/',(req,res)=>{
@@ -19,10 +21,16 @@ router.get('/',(req,res)=>{
     });
 });
 
-router.get('/addOrEdit',(req,res)=>{
-    res.render("ratingCommentAddOrEdit.hbs", {
-        viewTitle: "Rating and Commenting"
-    });
+router.get('/addOrEdit', (req, res) => {
+    Book.find({}, (err, bookList) => {
+        if (err) {
+            res.status(500).json({"error fetching book list for isbn display": err})
+        }
+        res.render("ratingCommentAddOrEdit.hbs", {
+            viewTitle: "Rating and Commenting",
+            bookList: bookList
+        });
+    })
 });
 
 router.post('/', (req, res) => {
@@ -67,7 +75,14 @@ router.get('/addOrEdit', (req, res) => {
 });
 
 async function insertRatingComment(req, res) {
-    ratingComment.create(req.body)
+    // create a copy of req.body
+    ratingCommentToInsert = req.body;
+    // Create date timestamp
+    now = new Date();
+    // Insert current date
+    ratingCommentToInsert.date = now;
+
+    ratingComment.create(ratingCommentToInsert)
 
     .then(result => {
         res.redirect('http://localhost:3000/ratingComment/list');
