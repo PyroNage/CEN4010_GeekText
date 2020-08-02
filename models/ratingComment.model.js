@@ -6,6 +6,7 @@ var ratingCommentSchema = new mongoose.Schema({
     //     type: Schema.Types.ObjectId, required: true, ref: 'Book'
     // },
     rc_isbn: String,
+    rc_date: Date,
     comments: String,
     ratings: Number
 });

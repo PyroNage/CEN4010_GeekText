@@ -68,7 +68,7 @@ router.get('/addOrEdit', (req, res) => {
 
 async function insertRatingComment(req, res) {
     ratingComment.create(req.body)
-
+    
     .then(result => {
         res.redirect('http://localhost:3000/ratingComment/list');
     })
