@@ -9,10 +9,14 @@ var Author = require('../models/author.model');
 
 
 //AUTHOR
-router.get('/',(req,res)=>{
-    res.render("authorAddOrEdit.hbs", {
-        viewTitle: "Insert Author"
-    });
+router.get('/', isLoggedIn, (req, res) => {
+    if (req.user.role != 'admin') {
+        res.json({ 'Restricted Access': 'Only Administrators should be here' })
+    } else {
+        res.render("authorAddOrEdit.hbs", {
+            viewTitle: "Insert Author"
+        });
+    }
 });
 
 router.get('/authorList', (req, res) => {
@@ -81,6 +85,16 @@ router.get('/delete/:id', (req, res) => {
         else { console.log('Error in book delete :' + err); }
     });
 });
+
+// ========= Logged In middleware =========
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+
+    // If user is not logged in, redirect to login page.
+    res.redirect('/login')
+}
 
 module.exports = router;
 

@@ -11,10 +11,14 @@ var Book = require('../models/book.model');
 
 
 // SEARCH RESULTS
-router.get('/result',(req,res)=>{
-    res.render("result.hbs", {
-        viewTitle: "ISBN or Author Search"
-    });
+router.get('/result', isLoggedIn, (req, res) => {
+    if (req.user.role != 'admin') {
+        res.json({ 'Restricted Access': 'Only Administrators should be here' })
+    } else {
+        res.render("result.hbs", {
+            viewTitle: "ISBN or Author Search"
+        });
+    }
 });
 
 router.post('/result',(req,res) => {
@@ -30,10 +34,14 @@ router.post('/result',(req,res) => {
 })
 
 //BOOK
-router.get('/', (req,res)=>{
-    res.render("addOrEdit.hbs", {
-        viewTitle: "Insert Book"
-    });
+router.get('/', isLoggedIn, (req, res) => {
+    if (req.user.role != 'admin') {
+        res.json({ 'Restricted Access': 'Only Administrators should be here' })
+    } else {
+        res.render("addOrEdit.hbs", {
+            viewTitle: "Insert Book"
+        });
+    }
 });
 
 router.post('/', (req, res) => {
@@ -191,6 +199,16 @@ router.get('/delete/:id', (req, res) => {
         else { console.log('Error in book delete :' + err); }
     });
 });
+
+// ========= Logged In middleware =========
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+
+    // If user is not logged in, redirect to login page.
+    res.redirect('/login')
+}
 
 module.exports = router;
 
