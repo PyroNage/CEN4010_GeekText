@@ -108,7 +108,7 @@ router.get('/sortedListBySales', (req, res) => {
 //Must retrieve books of a given rating and higher and a given amount of books (limit)
 //  Need user input on the rating and limit
 router.get('/sortedListByRating', (req, res) => {
-    Book.find({bookRating:{$gte:req.body.Rating}}, null, {sort: {bookRating: -1}}, (err, docs) => {
+    Book.find({ratings:{$gte:req.body.Rating}}, null, {sort: {bookRating: -1}}, (err, docs) => {
         if (!err) {
             res.render("list.hbs", {
                 list: docs
